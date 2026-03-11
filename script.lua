@@ -18,9 +18,13 @@ getgenv().TRonConfig = getgenv().TRonConfig or {
 	CDK                   = true,
 	StayS2ForDarkFragment = false,
 	FixLag                = false,
-	TweenSpeed            = 0.35,
+	TweenSpeed            = 350,
 	EatFruit              = true,
 	FruitToEat            = "",
+	SkyFarm               = true,   -- Farm NPCs direto do céu (Safe Mode)
+	SkyHeight             = 175,    -- Altura acima do NPC (studs) — recomendado 150~250
+	AutoHop               = true,   -- Troca de servidor automaticamente
+	HopInterval           = 1800,   -- Intervalo entre hops (segundos) — padrão 30min
 }
 
 local Players  = game:GetService("Players")
@@ -91,6 +95,63 @@ local function getMastery(styleName)
 		end
 	end)
 	return m
+end
+
+local function getSwordMastery(name)
+	local m = 0
+	pcall(function()
+		local sw = LP.Data:FindFirstChild("Swords") or LP.Data:FindFirstChild("Sword")
+		if sw then
+			for _, v in ipairs(sw:GetChildren()) do
+				if v.Name:lower():find(name:lower()) then m = v.Value or 0 end
+			end
+		end
+		-- fallback: Stats
+		local st = LP.Data:FindFirstChild("Stats")
+		if st and m == 0 then
+			local sv = st:FindFirstChild(name) or st:FindFirstChild("Sword")
+			if sv then m = sv.Value or 0 end
+		end
+	end)
+	return m
+end
+
+-- Equipa a arma certa dependendo da fase:
+--   Antes do God Human  → arma Melee (estilo de luta) para acumular maestria
+--   Depois do God Human → espada (Yama > Tushita > CDK) para acumular maestria
+local function EquipWeaponForPhase()
+	pcall(function()
+		local char = LP.Character
+		if not char then return end
+		local hum = char:FindFirstChildOfClass("Humanoid")
+		if not hum then return end
+
+		local function equipTool(name)
+			local tool = LP.Backpack:FindFirstChild(name) or char:FindFirstChild(name)
+			if tool and not char:FindFirstChild(name) then
+				hum:EquipTool(tool)
+				return true
+			end
+			return tool ~= nil
+		end
+
+		if not GodHumanDone then
+			-- Fase Melee: equipa God Human se tiver, senão Dragon Talon, etc.
+			local meleeOrder = {"God Human","Dragon Talon","Electric Claw","Sharkman Karate","Death Step","Dragon Breath","Electric","Black Leg"}
+			for _, style in ipairs(meleeOrder) do
+				if hasFightingStyle(style) then
+					-- Fighting styles não são tools — não precisa equipar, o jogo já usa automaticamente
+					break
+				end
+			end
+		else
+			-- Fase Sword: equipa CDK > Tushita > Yama em ordem de prioridade
+			local swordOrder = {"Cursed Dual Katana", "Tushita", "Yama"}
+			for _, sw in ipairs(swordOrder) do
+				if equipTool(sw) then break end
+			end
+		end
+	end)
 end
 
 local function hasFightingStyle(name)
@@ -205,15 +266,17 @@ local function TweenPlayer(cf)
 	pcall(function()
 		local hrp = LP.Character and LP.Character:FindFirstChild("HumanoidRootPart")
 		if not hrp then return end
-		local speed = math.clamp(getgenv().TRonConfig.TweenSpeed or 0.35, 0.1, 2)
-		local dist  = (hrp.Position - cf.Position).Magnitude
-		local t     = math.clamp(dist/800, 0.03, 3.5) * (speed/0.35)
-		local tw    = TweenSvc:Create(hrp, TweenInfo.new(t, Enum.EasingStyle.Linear), {CFrame=cf})
+		local dist = (hrp.Position - cf.Position).Magnitude
+		if dist < 3 then return end
+		-- Velocidade em studs/s igual ao Hub Main (350 = natural, sem risco de ban)
+		local tweenSpeed = math.clamp(getgenv().TRonConfig.TweenSpeed or 350, 50, 600)
+		local t = dist / tweenSpeed
+		local tw = TweenSvc:Create(hrp, TweenInfo.new(t, Enum.EasingStyle.Linear, Enum.EasingDirection.Out), {CFrame=cf})
 		tw:Play()
 		local elapsed = 0
 		while tw.PlaybackState ~= Enum.PlaybackState.Completed do
-			task.wait(0.04); elapsed=elapsed+0.04
-			if elapsed > 8 then tw:Cancel(); break end
+			task.wait(0.05); elapsed=elapsed+0.05
+			if elapsed > t + 2 then tw:Cancel(); break end
 		end
 	end)
 end
@@ -248,6 +311,46 @@ end
 
 local Pos = CFrame.new(0,0,3.5)
 
+-- ===== SKY FARM HELPER =====
+-- Retorna posicao no ceu acima do mob, olhando para ele
+-- O NPC nao consegue atingir o jogador nessa altura
+local function GetSkyPos(mob)
+	local hrp = mob and mob:FindFirstChild("HumanoidRootPart")
+	if not hrp then return nil end
+	local h = math.clamp(getgenv().TRonConfig.SkyHeight or 175, 80, 400)
+	local above = hrp.Position + Vector3.new(0, h, 0)
+	-- Olha para baixo em direcao ao NPC (melhora o hit rate das skills)
+	return CFrame.new(above, hrp.Position)
+end
+
+-- Reposiciona no ceu se o jogador saiu do ponto ideal
+local function LockSky(mob)
+	if not getgenv().TRonConfig.SkyFarm then return end
+	local hrp = LP.Character and LP.Character:FindFirstChild("HumanoidRootPart")
+	local mobHRP = mob and mob:FindFirstChild("HumanoidRootPart")
+	if not hrp or not mobHRP then return end
+	local h = math.clamp(getgenv().TRonConfig.SkyHeight or 175, 80, 400)
+	local target = mobHRP.Position + Vector3.new(0, h, 0)
+	-- So reposiciona se desviou mais de 12 studs
+	if (hrp.Position - target).Magnitude > 12 then
+		TweenPlayer(CFrame.new(target, mobHRP.Position))
+	end
+end
+
+-- Unico ponto de entrada para mover ate o mob (normal ou sky)
+local function MoveToMob(mob)
+	if not mob then return end
+	local mobHRP = mob:FindFirstChild("HumanoidRootPart")
+	if not mobHRP then return end
+	if getgenv().TRonConfig.SkyFarm then
+		local skyPos = GetSkyPos(mob)
+		if skyPos then TweenPlayer(skyPos) end
+		LockSky(mob)
+	else
+		TweenPlayer(mobHRP.CFrame * Pos)
+	end
+end
+
 local function GetEnemy(name)
 	local ef = workspace:FindFirstChild("Enemies")
 	if not ef then return nil end
@@ -267,15 +370,17 @@ end
 local FarmRunning = true
 local function KillMob(mob)
 	if not IsAlive(mob) then return end
-	local deadline = tick()+60
+	local deadline = tick() + 60
+	-- Posiciona inicial antes do loop (sky ou chao)
+	MoveToMob(mob)
 	repeat
 		pcall(function()
 			AutoHaki()
-			TweenPlayer(mob.HumanoidRootPart.CFrame*Pos)
+				MoveToMob(mob)
 			Attack()
 		end)
 		task.wait(0.18)
-	until not IsAlive(mob) or not FarmRunning or tick()>deadline
+	until not IsAlive(mob) or not FarmRunning or tick() > deadline
 end
 
 local function Hop()
@@ -295,10 +400,42 @@ local function Hop()
 	end)
 end
 
+-- ===== AUTO HOP A CADA 30 MINUTOS =====
 task.spawn(function()
+	while true do
+		local interval = math.max(60, getgenv().TRonConfig.HopInterval or 1800)
+		local remaining = interval
+		while remaining > 0 do
+			task.wait(1)
+			remaining = remaining - 1
+			-- Mostra contagem regressiva no status se inativo
+			if remaining % 60 == 0 and remaining > 0 then
+				pcall(function()
+					if getgenv().TRonStatusLabel and getgenv().TRonStatusLabel.Parent then
+						local mins = math.floor(remaining/60)
+						local prev = getgenv().TRonStatus or ""
+						getgenv().TRonStatusLabel.Text = prev.." [Hop em "..mins.."min]"
+					end
+				end)
+			end
+		end
+		if getgenv().TRonConfig.AutoHop and FarmRunning then
+			Hop()
+		end
+	end
+end)
+
+task.spawn(function()
+	local equipTimer = 0
 	while FarmRunning do
 		task.wait(0.6)
 		pcall(AutoHaki)
+		-- Reequipa a arma certa a cada ~3s
+		equipTimer = equipTimer + 0.6
+		if equipTimer >= 3 then
+			equipTimer = 0
+			pcall(EquipWeaponForPhase)
+		end
 	end
 end)
 
@@ -349,9 +486,18 @@ task.spawn(function()
 			local pts=LP.Data.Points.Value
 			if not pts or pts<=0 then return end
 			local function gs(n) local ok,v=pcall(function() return LP.Data.Stats:FindFirstChild(n).Value end); return ok and v or 0 end
-			if gs("Melee")<2800 then SafeInvoke("AddPoint","Melee",pts)
-			elseif gs("Defense")<2800 then SafeInvoke("AddPoint","Defense",pts)
-			elseif gs("Sword")<2800 then SafeInvoke("AddPoint","Sword",pts)
+			if not GodHumanDone then
+				-- Fase pré-God Human: maximiza Melee para maestria dos estilos
+				if     gs("Melee")  < 2800 then SafeInvoke("AddPoint","Melee",pts)
+				elseif gs("Defense") < 2800 then SafeInvoke("AddPoint","Defense",pts)
+				elseif gs("Sword")   < 2800 then SafeInvoke("AddPoint","Sword",pts)
+				end
+			else
+				-- Fase pós-God Human: maximiza Sword para Yama/Tushita/CDK
+				if     gs("Sword")   < 2800 then SafeInvoke("AddPoint","Sword",pts)
+				elseif gs("Defense") < 2800 then SafeInvoke("AddPoint","Defense",pts)
+				elseif gs("Melee")   < 2800 then SafeInvoke("AddPoint","Melee",pts)
+				end
 			end
 		end)
 	end
@@ -516,7 +662,7 @@ local function DoFarmLevel()
 	end
 	local mob=GetEnemy(Mon)
 	if mob and IsAlive(mob) then
-		TweenPlayer(mob.HumanoidRootPart.CFrame*Pos)
+		MoveToMob(mob)
 		AutoHaki(); Attack()
 	else TweenPlayer(CFrameMon) end
 end
@@ -601,7 +747,7 @@ local function AdvanceFightStyle()
 				else
 					setStatus("🦴 Farmando Bones ("..bone.."/500) para Dragon Talon")
 					local mob=GetEnemy("Possessed Mummy") or GetEnemy("Reaper") or GetEnemy("Cursed Skeleton")
-					if mob and IsAlive(mob) then TweenPlayer(mob.HumanoidRootPart.CFrame*Pos); AutoHaki(); Attack()
+					if mob and IsAlive(mob) then MoveToMob(mob); AutoHaki(); Attack()
 					else TweenPlayer(CFrame.new(5500,22,-3200)) end
 				end
 			else
@@ -648,21 +794,70 @@ local function DoTushitaQuest()
 	task.wait(2); TushitaDone=hasTushita()
 end
 
+-- Maestria mínima exigida para Yama e Tushita antes de pegar a CDK
+local YAMA_MASTERY_NEEDED    = 400
+local TUSHITA_MASTERY_NEEDED = 400
+
+local function FarmYamaMastery()
+	-- Vai até a Ilha Empress e mata para acumular maestria da Yama
+	setStatus("⚔️ CDK: Treinando Yama ["..getSwordMastery("Yama").."/"..(YAMA_MASTERY_NEEDED).."]")
+	EquipWeaponForPhase()  -- garante que Yama está equipada
+	SafeInvoke("StartQuest","YamaQuest",1); task.wait(0.3)
+	local mob = GetEnemy("Island Empress") or GetEnemy("Yama") or GetEnemy("Awakened Ice Admiral")
+	if mob and IsAlive(mob) then
+		MoveToMob(mob); AutoHaki(); Attack()
+	else
+		TweenPlayer(CFrame.new(8037.26, 249.33, -1034.44))
+	end
+end
+
+local function FarmTushitaMastery()
+	-- Vai até Hydra Island e mata para acumular maestria da Tushita
+	setStatus("📜 CDK: Treinando Tushita ["..getSwordMastery("Tushita").."/"..(TUSHITA_MASTERY_NEEDED).."]")
+	EquipWeaponForPhase()  -- garante que Tushita está equipada
+	SafeInvoke("requestEntrance", Vector3.new(-12386.9, 364.3, -7590.2)); task.wait(0.5)
+	SafeInvoke("StartQuest","TushitaQuest",1); task.wait(0.3)
+	local mob = GetEnemy("Longma") or GetEnemy("Tushita") or GetEnemy("Cursed Skeleton")
+	if mob and IsAlive(mob) then
+		MoveToMob(mob); AutoHaki(); Attack()
+	else
+		TweenPlayer(CFrame.new(-12386.9, 364.3, -7590.2))
+	end
+end
+
 local function DoCDKQuest()
 	if CDKDone or hasCDK() then CDKDone=true return end
 	setStatus("⚔️ Quest CDK")
+
+	-- Passo 1: Obter Yama
 	if not hasYama() then
-		setStatus("⚔️ CDK: Farmando Yama")
+		setStatus("⚔️ CDK: Farmando Yama (item)")
 		SafeInvoke("StartQuest","YamaQuest",1); task.wait(0.5)
-		local mob=GetEnemy("Island Empress") or GetEnemy("Yama")
-		if mob and IsAlive(mob) then TweenPlayer(mob.HumanoidRootPart.CFrame*Pos); AutoHaki(); Attack()
-		else TweenPlayer(CFrame.new(8037.26,249.33,-1034.44)) end
-	elseif not hasTushita() then
-		DoTushitaQuest()
-	else
-		setStatus("⚔️ CDK: Obtendo CDK!")
-		SafeInvoke("GetCDK"); task.wait(3); CDKDone=hasCDK()
+		local mob = GetEnemy("Island Empress") or GetEnemy("Yama")
+		if mob and IsAlive(mob) then MoveToMob(mob); AutoHaki(); Attack()
+		else TweenPlayer(CFrame.new(8037.26, 249.33, -1034.44)) end
+		return
 	end
+
+	-- Passo 2: Treinar maestria da Yama até o mínimo
+	if getSwordMastery("Yama") < YAMA_MASTERY_NEEDED then
+		FarmYamaMastery(); return
+	end
+
+	-- Passo 3: Obter Tushita
+	if not hasTushita() then
+		DoTushitaQuest(); return
+	end
+
+	-- Passo 4: Treinar maestria da Tushita até o mínimo
+	if getSwordMastery("Tushita") < TUSHITA_MASTERY_NEEDED then
+		FarmTushitaMastery(); return
+	end
+
+	-- Passo 5: Obter CDK
+	setStatus("⚔️ CDK: Tudo pronto! Obtendo CDK!")
+	SafeInvoke("GetCDK"); task.wait(3)
+	CDKDone = hasCDK()
 end
 
 local function DoSkullGuitarQuest()
@@ -687,12 +882,12 @@ local function DoSkullGuitarQuest()
 	elseif ecto<250 then
 		setStatus("⚗️ Skull Guitar: Ecto no Navio Assombrado ("..ecto.."/250)")
 		local mob=GetEnemy("Zombie") or GetEnemy("Demonic Soul") or GetEnemy("Cursed Skeleton")
-		if mob and IsAlive(mob) then TweenPlayer(mob.HumanoidRootPart.CFrame*Pos); AutoHaki(); Attack()
+		if mob and IsAlive(mob) then MoveToMob(mob); AutoHaki(); Attack()
 		else TweenPlayer(CFrame.new(3898,22,-4100)) end
 	elseif bone<500 then
 		setStatus("🦴 Skull Guitar: Bones no Castelo Assombrado ("..bone.."/500)")
 		local mob=GetEnemy("Possessed Mummy") or GetEnemy("Reaper") or GetEnemy("Cursed Skeleton")
-		if mob and IsAlive(mob) then TweenPlayer(mob.HumanoidRootPart.CFrame*Pos); AutoHaki(); Attack()
+		if mob and IsAlive(mob) then MoveToMob(mob); AutoHaki(); Attack()
 		else TweenPlayer(CFrame.new(5500,22,-3200)) end
 	end
 end
@@ -709,7 +904,7 @@ local function DoTyrantOfSkies()
 	local npcs={"Isle Outlaw","Island Boy","Sun-kissed Warrior","Isle Champion","Serpent Hunter","Skull Slayer"}
 	for _,n in ipairs(npcs) do
 		local mob=GetEnemy(n)
-		if mob and IsAlive(mob) then TweenPlayer(mob.HumanoidRootPart.CFrame*Pos); AutoHaki(); Attack(); return end
+		if mob and IsAlive(mob) then MoveToMob(mob); AutoHaki(); Attack(); return end
 	end
 	TweenPlayer(CFrame.new(-16547,56,-172))
 end
@@ -768,7 +963,7 @@ task.spawn(function()
 				elseif lv<150 then
 					setStatus("🌤️ Farm Sky Island Lv"..lv)
 					local mob=GetEnemy("Sky Bandit") or GetEnemy("Dark Master") or GetEnemy("Galley Captain")
-					if mob and IsAlive(mob) then TweenPlayer(mob.HumanoidRootPart.CFrame*Pos); AutoHaki(); Attack()
+					if mob and IsAlive(mob) then MoveToMob(mob); AutoHaki(); Attack()
 					else TweenPlayer(CFrame.new(-4953,296,-2899)) end
 				elseif not SaberDone and lv>=200 then DoSaberQuest()
 				elseif not HakiKenBought and beli>=750000 then
@@ -800,7 +995,7 @@ task.spawn(function()
 					elseif ecto<250 then
 						setStatus("⚗️ Sea2: Farmando Ectoplasm ("..ecto.."/250)")
 						local mob=GetEnemy("Zombie") or GetEnemy("Demonic Soul")
-						if mob and IsAlive(mob) then TweenPlayer(mob.HumanoidRootPart.CFrame*Pos); AutoHaki(); Attack()
+						if mob and IsAlive(mob) then MoveToMob(mob); AutoHaki(); Attack()
 						else TweenPlayer(CFrame.new(3898,22,-4100)) end
 					else setStatus("✅ Sea2: Materiais prontos!") end
 					return
@@ -1002,6 +1197,28 @@ task.spawn(function()
 	end
 end)
 
+mkSec("⏱️ Auto Hop")
+local hopCard=mkCard(44)
+local hopTimerLbl=mkLbl(hopCard,"⏳ Próximo hop: calculando...",12,Color3.fromRGB(180,140,255),0,0,1,36)
+task.spawn(function()
+	while SG and SG.Parent do
+		task.wait(1)
+		pcall(function()
+			local interval=math.max(60,getgenv().TRonConfig.HopInterval or 1800)
+			local elapsed=(tick()%interval)
+			local remaining=math.floor(interval-elapsed)
+			local mins=math.floor(remaining/60); local secs=remaining%60
+			if getgenv().TRonConfig.AutoHop then
+				hopTimerLbl.Text=string.format("⏳ Próximo hop em: %02d:%02d",mins,secs)
+				hopTimerLbl.TextColor3=remaining<120 and Color3.fromRGB(255,100,80) or Color3.fromRGB(180,140,255)
+			else
+				hopTimerLbl.Text="🚫 Auto Hop desativado"
+				hopTimerLbl.TextColor3=Color3.fromRGB(120,120,120)
+			end
+		end)
+	end
+end)
+
 mkSec("💬 Comunidade TRon Void")
 local discCard=mkCard(44)
 mkLbl(discCard,"Join On TRON VOID COMMUNITY — discord.gg/f4K5sDwKkn",12,Color3.fromRGB(130,140,255),0,0,0.72,40)
@@ -1010,8 +1227,8 @@ Instance.new("UICorner",discBtn).CornerRadius=UDim.new(0,8)
 discBtn.MouseButton1Click:Connect(function() pcall(function() setclipboard("https://discord.gg/f4K5sDwKkn") end); discBtn.Text="✅ Copiado!"; task.delay(2,function() discBtn.Text="Copy Discord" end) end)
 
 mkSec("⚙️ Getgenv Config")
-local genvCard=mkCard(122)
-mkLbl(genvCard,"getgenv().TRonConfig = {\n  Team = \"Pirate\",                  -- Pirate ou Marine\n  FullFightStyles = true,           -- Evolui até God Human\n  CDK = true,                       -- Faz quest CDK\n  StayS2ForDarkFragment = false,    -- Fica S2 até Dark Fragment\n  FixLag = false,                   -- Remove efeitos de lag\n  TweenSpeed = 0.35,               -- Velocidade tween\n  EatFruit = true,                  -- Pega frutas do mapa\n  FruitToEat = \"\",                  -- Nome da fruta pra comer\n}",10,Color3.fromRGB(160,160,255),0,0,1,114)
+local genvCard=mkCard(138)
+mkLbl(genvCard,"getgenv().TRonConfig = {\n  Team = \"Pirate\",     -- Pirate/Marine\n  FullFightStyles = true, -- Até God Human\n  CDK = true,           -- Quest CDK completa\n  SkyFarm = true,       -- Farm do céu\n  SkyHeight = 175,      -- Altura acima NPC\n  AutoHop = true,       -- Hop automático\n  HopInterval = 1800,   -- Segundos (1800=30min)\n  TweenSpeed = 350,     -- studs/s\n  EatFruit = true,\n  FruitToEat = \"\",\n}",10,Color3.fromRGB(160,160,255),0,0,1,126)
 
 local dragging,dragStart,dragStartPos
 TopBar.InputBegan:Connect(function(inp) if inp.UserInputType==Enum.UserInputType.MouseButton1 or inp.UserInputType==Enum.UserInputType.Touch then dragging=true; dragStart=inp.Position; dragStartPos=Main.Position end end)
