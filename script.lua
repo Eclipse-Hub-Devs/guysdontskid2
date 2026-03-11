@@ -405,16 +405,29 @@ task.spawn(function()
     local BOrigSize = UDim2.new(0, 36, 0, 36)
     local BZoomSize = UDim2.new(0, 28, 0, 28)
 
-    BToggleBtn.MouseButton1Down:Connect(function()
-        if BZoomedIn then
-            BTweenService:Create(BToggleImg, BTweenInfo, {Size = BOrigSize}):Play()
-        else
-            BTweenService:Create(BToggleImg, BTweenInfo, {Size = BZoomSize}):Play()
-        end
-        BZoomedIn = not BZoomedIn
+    -- Estado inicial: status visível, big UI escondida
+    CoinCard.Enabled = false
+    BStatus.Enabled = true
+    Bblur.Size = 0
 
-        CoinCard.Enabled = not CoinCard.Enabled
-        Bblur.Size = CoinCard.Enabled and 16 or 0
+    local _showingBig = false
+    BToggleBtn.MouseButton1Click:Connect(function()
+        local tweenInfo = TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+        if not _showingBig then
+            -- Abre a UI grande, esconde status
+            _showingBig = true
+            BStatus.Enabled = false
+            CoinCard.Enabled = true
+            Bblur.Size = 16
+            game:GetService("TweenService"):Create(BToggleFrame, tweenInfo, {BackgroundColor3 = Color3.fromRGB(60, 0, 130)}):Play()
+        else
+            -- Fecha a UI grande, mostra status
+            _showingBig = false
+            CoinCard.Enabled = false
+            BStatus.Enabled = true
+            Bblur.Size = 0
+            game:GetService("TweenService"):Create(BToggleFrame, tweenInfo, {BackgroundColor3 = Color3.fromRGB(30, 5, 60)}):Play()
+        end
     end)
 
     -- Update stats loop
@@ -7979,8 +7992,8 @@ task["spawn"](function()
 				local L_646_ = {}
 				L_646_[1] = Instance["new"]("Highlight")
 				L_646_[1]["Name"] = "Highlight"
-				L_646_[1]["FillColor"] = Color3["fromRGB"](255, 0, 0)
-				L_646_[1]["OutlineColor"] = Color3["fromRGB"](255, 0, 0)
+				L_646_[1]["FillColor"] = Color3["fromRGB"](100, 0, 200)
+				L_646_[1]["OutlineColor"] = Color3["fromRGB"](160, 0, 255)
 				L_646_[1]["FillTransparency"] = 0.5
 				L_646_[1]["OutlineTransparency"] = 0
 				L_646_[1]["Adornee"] = L_1_[35]["Character"]
