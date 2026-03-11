@@ -301,7 +301,7 @@ task.spawn(function()
     BStatusHolder.BackgroundTransparency = 1
     BStatusHolder.BorderSizePixel = 0
     BStatusHolder.Position = UDim2.new(0.5, 0, 0.05, 0)
-    BStatusHolder.Size = UDim2.new(0, 320, 0, 68)
+    BStatusHolder.Size = UDim2.new(0, 400, 0, 90)
 
     local BShadow2 = Instance.new("ImageLabel")
     BShadow2.Parent = BStatusHolder
@@ -324,7 +324,7 @@ task.spawn(function()
     BStatusMain.BackgroundTransparency = 0.3
     BStatusMain.BorderSizePixel = 0
     BStatusMain.Position = UDim2.new(0.5, 0, 0.5, 0)
-    BStatusMain.Size = UDim2.new(1, -50, 1, -55)
+    BStatusMain.Size = UDim2.new(1, -20, 1, -20)
 
     local BStatusStroke = Instance.new("UIStroke")
     BStatusStroke.Parent = BStatusMain
@@ -339,24 +339,52 @@ task.spawn(function()
     BStatusTop.Parent = BStatusMain
     BStatusTop.AnchorPoint = Vector2.new(0.5, 0)
     BStatusTop.BackgroundTransparency = 1
-    BStatusTop.Position = UDim2.new(0.5, 0, 0, 10)
-    BStatusTop.Size = UDim2.new(0, 300, 0, 18)
+    BStatusTop.Position = UDim2.new(0.5, 0, 0, -2)
+    BStatusTop.Size = UDim2.new(1, -10, 0, 14)
     BStatusTop.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
     BStatusTop.Text = "Status: Waiting for available room..."
     BStatusTop.TextColor3 = Color3.fromRGB(200, 100, 255)
-    BStatusTop.TextSize = 16
+    BStatusTop.TextSize = 12
     BStatusTop.TextWrapped = true
 
     local BStatusFarm = Instance.new("TextLabel")
     BStatusFarm.Parent = BStatusMain
     BStatusFarm.AnchorPoint = Vector2.new(0.5, 0)
     BStatusFarm.BackgroundTransparency = 1
-    BStatusFarm.Position = UDim2.new(0.5, 0, 0, 30)
-    BStatusFarm.Size = UDim2.new(0, 450, 0, 18)
+    BStatusFarm.Position = UDim2.new(0.5, 0, 0, 10)
+    BStatusFarm.Size = UDim2.new(1, -10, 0, 18)
     BStatusFarm.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
     BStatusFarm.Text = "Status Farm: N/A"
     BStatusFarm.TextColor3 = Color3.fromRGB(160, 0, 255)
-    BStatusFarm.TextSize = 16
+    BStatusFarm.TextSize = 14
+    BStatusFarm.TextXAlignment = Enum.TextXAlignment.Center
+
+    local BStatusNextFS = Instance.new("TextLabel")
+    BStatusNextFS.Parent = BStatusMain
+    BStatusNextFS.AnchorPoint = Vector2.new(0.5, 0)
+    BStatusNextFS.BackgroundTransparency = 1
+    BStatusNextFS.Position = UDim2.new(0.5, 0, 0, 30)
+    BStatusNextFS.Size = UDim2.new(1, -10, 0, 18)
+    BStatusNextFS.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+    BStatusNextFS.Text = "Status: Farming for N/A"
+    BStatusNextFS.TextColor3 = Color3.fromRGB(200, 80, 255)
+    BStatusNextFS.TextSize = 14
+    BStatusNextFS.TextXAlignment = Enum.TextXAlignment.Center
+
+    local BStatusCurFS = Instance.new("TextLabel")
+    BStatusCurFS.Parent = BStatusMain
+    BStatusCurFS.AnchorPoint = Vector2.new(0.5, 0)
+    BStatusCurFS.BackgroundTransparency = 1
+    BStatusCurFS.Position = UDim2.new(0.5, 0, 0, 50)
+    BStatusCurFS.Size = UDim2.new(1, -10, 0, 18)
+    BStatusCurFS.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+    BStatusCurFS.Text = "Style: N/A  |  Mastery: N/A"
+    BStatusCurFS.TextColor3 = Color3.fromRGB(160, 0, 255)
+    BStatusCurFS.TextSize = 13
+    BStatusCurFS.TextXAlignment = Enum.TextXAlignment.Center
+
+    _G.TRonNextFS = BStatusNextFS
+    _G.TRonCurFS  = BStatusCurFS
 
     -- Toggle button
     local BToggleGui = Instance.new("ScreenGui")
@@ -4385,7 +4413,7 @@ task["spawn"](function()
 							Quest = "Shark Saw"
 							return
 						end
-						if L_1_[45]["tf"](Configs["Sword"], "Wardens Sword") and (L_1_[24]["Value"] >= 100 and (not L_1_[45]["gi"]("Wardens Sword") and (Old_World and L_1_[45]["CheckBoss"]("Chief Warden")))) then
+						if L_1_[45]["tf"](Configs["Sword"], "Wardens Sword") and (L_1_[24]["Value"] >= 100 and (not L_1_[45]["gi"]("Wardens Sword") and Old_World and (L_1_[45]["CheckBoss"]("Chief Warden") or (L_1_[35]["Character"] and L_1_[35]["Character"]:FindFirstChild("HumanoidRootPart") and (L_1_[35]["Character"]["HumanoidRootPart"]["Position"] - Vector3.new(230, 15, 1715)).Magnitude <= 600)))) then
 							Quest = "Wardens Sword"
 							return
 						end
@@ -6284,7 +6312,7 @@ task["spawn"](function()
 							end
 						end
 					end
-				until not L_1_[45]["CheckBoss"]("The Saw")
+				until not L_1_[45]["CheckBoss"]("Chief Warden")
 			elseif Quest == "Magma Blaster" then
 				if not L_1_[45]["CheckBoss"]("Magma Admiral") then
 					return
@@ -8181,4 +8209,210 @@ task["spawn"](function()
 			L_1_[45]["wt"](100)
 		end)
 	end
+end)
+
+
+
+-- ======================================================
+-- BUY FIGHT STYLES AUTO SYSTEM - TRon Void Ez Kaitun
+-- ======================================================
+task.spawn(function()
+	local RS = game:GetService("ReplicatedStorage")
+	local Players = game:GetService("Players")
+	local LP = Players.LocalPlayer
+
+	local SEA = 1
+	if game.PlaceId == 4442272183 or game.PlaceId == 79091703265657 then SEA = 2
+	elseif game.PlaceId == 7449423635 or game.PlaceId == 100117331123089 then SEA = 3
+	end
+
+	local FS_NPC = {
+		DarkStep    = {[1]=Vector3.new(-988,13,3996),       [2]=Vector3.new(-4967,315,-3197),  [3]=Vector3.new(-5043,371,-3183)},
+		Electric    = {[1]=Vector3.new(-5382,14,-2150),     [2]=Vector3.new(-4864,35,-4768),   [3]=Vector3.new(-4993,315,-3198)},
+		WaterKungFu = {[1]=Vector3.new(61584,19,989),       [2]=Vector3.new(-4960,35,-4663),   [3]=Vector3.new(-5017,371,-3188)},
+		DragonBreath= {[2]=Vector3.new(-2066,69,-3307),     [3]=Vector3.new(-5010,315,-3202)},
+		DeathStep   = {[2]=Vector3.new(6360,297,-6764),     [3]=Vector3.new(-4998,315,-3220)},
+		SharkmanKarate={[2]=Vector3.new(-2602,239,-10315),  [3]=Vector3.new(-4970,315,-3225)},
+		ElectricClaw= {[3]=Vector3.new(-10370,332,-10126)},
+		DragonTalon = {[3]=Vector3.new(5662,1211,859)},
+		Superhuman  = {[2]=Vector3.new(1378,247,-5189),     [3]=Vector3.new(-4998,371,-3197)},
+		GodHuman    = {[3]=Vector3.new(-13776,335,-9878)},
+	}
+
+	local FS_REMOTE = {
+		DarkStep     = "BuyDarkStep",
+		Electric     = "BuyElectro",
+		WaterKungFu  = "BuyWaterKungFu",
+		DragonBreath = "BuyDragonBreath",
+		DeathStep    = "BuyDeathStep",
+		SharkmanKarate = "BuySharkmanKarate",
+		ElectricClaw = "BuyElectricClaw",
+		DragonTalon  = "BuyDragonTalon",
+		Superhuman   = "BuySuperhuman",
+		GodHuman     = "BuyGodhuman",
+	}
+
+	local FS_DISPLAY = {
+		DarkStep     = "Dark Step",
+		Electric     = "Electric",
+		WaterKungFu  = "Water Kung Fu",
+		DragonBreath = "Dragon Breath",
+		DeathStep    = "Death Step",
+		SharkmanKarate = "Sharkman Karate",
+		ElectricClaw = "Electric Claw",
+		DragonTalon  = "Dragon Talon",
+		Superhuman   = "Superhuman",
+		GodHuman     = "GodHuman",
+	}
+
+	local FS_INGAME = {
+		DarkStep     = "Dark Step",
+		Electric     = "Electric",
+		WaterKungFu  = "Water Kung Fu",
+		DragonBreath = "Dragon Breath",
+		DeathStep    = "Death Step",
+		SharkmanKarate = "Sharkman Karate",
+		ElectricClaw = "Electric Claw",
+		DragonTalon  = "Dragon Talon",
+		Superhuman   = "Superhuman",
+		GodHuman     = "GodHuman",
+	}
+
+	local FS_ORDER = {
+		"DarkStep","Electric","WaterKungFu","DragonBreath",
+		"DeathStep","ElectricClaw","SharkmanKarate","DragonTalon",
+		"Superhuman","GodHuman",
+	}
+
+	local function HRP()
+		return LP.Character and LP.Character:FindFirstChild("HumanoidRootPart")
+	end
+
+	local function tpTo(pos)
+		local hrp = HRP()
+		if not hrp then return end
+		local LV = Instance.new("LinearVelocity")
+		local att = hrp:FindFirstChildOfClass("Attachment") or Instance.new("Attachment", hrp)
+		LV.Attachment0 = att; LV.MaxForce = math.huge
+		LV.VectorVelocity = Vector3.zero; LV.Parent = hrp
+		local start = tick()
+		repeat
+			task.wait()
+			local hrp2 = HRP()
+			if not hrp2 then break end
+			local delta = pos - hrp2.Position
+			local dist = delta.Magnitude
+			if dist > 3 then
+				LV.VectorVelocity = delta.Unit * math.clamp(dist * 6, 80, 280)
+			else
+				LV.VectorVelocity = Vector3.zero
+				hrp2.CFrame = CFrame.new(pos)
+			end
+		until (HRP() and (HRP().Position - pos).Magnitude <= 4) or tick()-start > 30
+		pcall(function() LV:Destroy() end)
+	end
+
+	local function getStyleMastery(styleName)
+		local char = LP.Character
+		if not char then return 0 end
+		local tool = char:FindFirstChild(styleName) or LP.Backpack:FindFirstChild(styleName)
+		if tool and tool:FindFirstChild("Mastery") then
+			return tool.Mastery.Value
+		end
+		return 0
+	end
+
+	local function hasStyle(styleName)
+		local char = LP.Character
+		if not char then return false end
+		return char:FindFirstChild(styleName) ~= nil or LP.Backpack:FindFirstChild(styleName) ~= nil
+	end
+
+	local function equipStyle(styleName)
+		for i = 1, 10 do
+			pcall(function()
+				RS.Remotes.CommF_:InvokeServer("EquipTool", styleName)
+			end)
+			task.wait(0.5)
+			if LP.Character and LP.Character:FindFirstChild(styleName) then return true end
+		end
+		return false
+	end
+
+	local function updateFSStatus(currentKey, nextKey)
+		pcall(function()
+			local cur = currentKey and FS_DISPLAY[currentKey] or "N/A"
+			local nxt = nextKey and FS_DISPLAY[nextKey] or "Done!"
+			local mast = currentKey and getStyleMastery(FS_INGAME[currentKey]) or 0
+			if _G.TRonNextFS then _G.TRonNextFS.Text = "Status: Farming for " .. nxt end
+			if _G.TRonCurFS  then _G.TRonCurFS.Text  = "Style: " .. cur .. "  |  Mastery: " .. tostring(mast) .. "/400" end
+		end)
+	end
+
+	local function buyStyle(key)
+		local pos = FS_NPC[key] and FS_NPC[key][SEA]
+		if not pos then return false end
+		local remote = FS_REMOTE[key]
+		for attempt = 1, 5 do
+			tpTo(pos)
+			task.wait(0.5)
+			local res = pcall(function()
+				RS.Remotes.CommF_:InvokeServer(remote)
+			end)
+			task.wait(1)
+			if hasStyle(FS_INGAME[key]) then return true end
+		end
+		return hasStyle(FS_INGAME[key])
+	end
+
+	local function farmMastery(key, targetMastery)
+		targetMastery = targetMastery or 400
+		local displayName = FS_INGAME[key]
+		equipStyle(displayName)
+		while getStyleMastery(displayName) < targetMastery do
+			if SROP then task.wait(1); continue end
+			updateFSStatus(key, FS_ORDER[table.find(FS_ORDER, key) + 1] or nil)
+			task.wait(2)
+		end
+	end
+
+	-- Wait for game to be fully loaded and AutoFarm to be active
+	repeat task.wait(3) until (getgenv())["AutoFarm"]
+	task.wait(10)
+
+	for i, key in ipairs(FS_ORDER) do
+		local displayName = FS_INGAME[key]
+		local nextKey = FS_ORDER[i+1]
+
+		-- Update UI with next target
+		if _G.TRonNextFS then _G.TRonNextFS.Text = "Status: Farming for " .. FS_DISPLAY[key] end
+
+		-- Buy if not owned
+		if not hasStyle(displayName) then
+			-- Wait until we have enough beli/fragments
+			repeat
+				task.wait(5)
+			until (getgenv())["AutoFarm"] == false or hasStyle(displayName) or
+				(key ~= "GodHuman" and key ~= "DragonBreath" and L_1_[1] and L_1_[1].Value >= 150000) or
+				hasStyle(displayName)
+
+			if SROP then
+				repeat task.wait(1) until not SROP
+			end
+
+			buyStyle(key)
+			task.wait(2)
+		end
+
+		-- Farm to 400 mastery
+		if hasStyle(displayName) then
+			farmMastery(key, 400)
+		end
+
+		updateFSStatus(nextKey, FS_ORDER[i+2] or nil)
+		task.wait(2)
+	end
+
+	if _G.TRonNextFS then _G.TRonNextFS.Text = "Status: GodHuman DONE! ✅" end
+	if _G.TRonCurFS  then _G.TRonCurFS.Text  = "Style: GodHuman  |  Mastery: MAX" end
 end)
