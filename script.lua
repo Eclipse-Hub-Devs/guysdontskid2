@@ -301,7 +301,7 @@ task.spawn(function()
     BStatusHolder.BackgroundTransparency = 1
     BStatusHolder.BorderSizePixel = 0
     BStatusHolder.Position = UDim2.new(0.5, 0, 0.05, 0)
-    BStatusHolder.Size = UDim2.new(0, 400, 0, 90)
+    BStatusHolder.Size = UDim2.new(0, 480, 0, 110)
 
     local BShadow2 = Instance.new("ImageLabel")
     BShadow2.Parent = BStatusHolder
@@ -324,7 +324,7 @@ task.spawn(function()
     BStatusMain.BackgroundTransparency = 0.3
     BStatusMain.BorderSizePixel = 0
     BStatusMain.Position = UDim2.new(0.5, 0, 0.5, 0)
-    BStatusMain.Size = UDim2.new(1, -20, 1, -20)
+    BStatusMain.Size = UDim2.new(1, -10, 1, -10)
 
     local BStatusStroke = Instance.new("UIStroke")
     BStatusStroke.Parent = BStatusMain
@@ -340,47 +340,47 @@ task.spawn(function()
     BStatusTop.AnchorPoint = Vector2.new(0.5, 0)
     BStatusTop.BackgroundTransparency = 1
     BStatusTop.Position = UDim2.new(0.5, 0, 0, -2)
-    BStatusTop.Size = UDim2.new(1, -10, 0, 14)
+    BStatusTop.Size = UDim2.new(1, -10, 0, 0)
     BStatusTop.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
     BStatusTop.Text = "Status: Waiting for available room..."
     BStatusTop.TextColor3 = Color3.fromRGB(200, 100, 255)
-    BStatusTop.TextSize = 12
+    BStatusTop.TextSize = 0
     BStatusTop.TextWrapped = true
 
     local BStatusFarm = Instance.new("TextLabel")
     BStatusFarm.Parent = BStatusMain
     BStatusFarm.AnchorPoint = Vector2.new(0.5, 0)
     BStatusFarm.BackgroundTransparency = 1
-    BStatusFarm.Position = UDim2.new(0.5, 0, 0, 10)
-    BStatusFarm.Size = UDim2.new(1, -10, 0, 18)
+    BStatusFarm.Position = UDim2.new(0.5, 0, 0, 6)
+    BStatusFarm.Size = UDim2.new(1, -10, 0, 22)
     BStatusFarm.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
     BStatusFarm.Text = "Status Farm: N/A"
     BStatusFarm.TextColor3 = Color3.fromRGB(160, 0, 255)
-    BStatusFarm.TextSize = 14
+    BStatusFarm.TextSize = 16
     BStatusFarm.TextXAlignment = Enum.TextXAlignment.Center
 
     local BStatusNextFS = Instance.new("TextLabel")
     BStatusNextFS.Parent = BStatusMain
     BStatusNextFS.AnchorPoint = Vector2.new(0.5, 0)
     BStatusNextFS.BackgroundTransparency = 1
-    BStatusNextFS.Position = UDim2.new(0.5, 0, 0, 30)
-    BStatusNextFS.Size = UDim2.new(1, -10, 0, 18)
+    BStatusNextFS.Position = UDim2.new(0.5, 0, 0, 34)
+    BStatusNextFS.Size = UDim2.new(1, -10, 0, 22)
     BStatusNextFS.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
     BStatusNextFS.Text = "Status: Farming for N/A"
     BStatusNextFS.TextColor3 = Color3.fromRGB(200, 80, 255)
-    BStatusNextFS.TextSize = 14
+    BStatusNextFS.TextSize = 15
     BStatusNextFS.TextXAlignment = Enum.TextXAlignment.Center
 
     local BStatusCurFS = Instance.new("TextLabel")
     BStatusCurFS.Parent = BStatusMain
     BStatusCurFS.AnchorPoint = Vector2.new(0.5, 0)
     BStatusCurFS.BackgroundTransparency = 1
-    BStatusCurFS.Position = UDim2.new(0.5, 0, 0, 50)
-    BStatusCurFS.Size = UDim2.new(1, -10, 0, 18)
+    BStatusCurFS.Position = UDim2.new(0.5, 0, 0, 64)
+    BStatusCurFS.Size = UDim2.new(1, -10, 0, 20)
     BStatusCurFS.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
     BStatusCurFS.Text = "Style: N/A  |  Mastery: N/A"
     BStatusCurFS.TextColor3 = Color3.fromRGB(160, 0, 255)
-    BStatusCurFS.TextSize = 13
+    BStatusCurFS.TextSize = 14
     BStatusCurFS.TextXAlignment = Enum.TextXAlignment.Center
 
     _G.TRonNextFS = BStatusNextFS
@@ -2607,7 +2607,8 @@ L_1_[31] = function(L_32_arg0, L_33_arg1, L_34_arg2)
 		for L_37_forvar0, L_38_forvar1 in pairs(L_36_[1]) do
 			local L_39_ = {}
 			L_39_[3], L_39_[1] = L_37_forvar0, L_38_forvar1
-			if _G[L_39_[1][2]] and (L_39_[1][1] - L_35_[10]["Position"])["Magnitude"] <= 2300 then
+			-- Threshold reduzido para 1000 para evitar loop na Selva (Sea 1)
+			if _G[L_39_[1][2]] and (L_39_[1][1] - L_35_[10]["Position"])["Magnitude"] <= 1000 then
 				(game:GetService("ReplicatedStorage"))["Remotes"]["CommF_"]:InvokeServer("requestEntrance", L_39_[1][1])
 				break
 			end
@@ -2906,70 +2907,22 @@ setmetatable(L_1_[45], {
 				L_1_[2]:SendMouseButtonEvent(L_122_[1]["AbsolutePosition"]["X"] + L_122_[1]["AbsoluteSize"]["X"] / 2, L_122_[1]["AbsolutePosition"]["Y"] + 90, 0, false, L_122_[1], 1)
 			end
 		elseif L_60_[3] == "HopLowServer" then
+			-- Auto Hop Server (TRon Void Hub - safe, usa TeleportService nativo)
 			return function(L_123_arg0)
-				local L_124_ = {}
-				L_124_[1] = L_123_arg0
 				pcall(function()
-					local L_125_ = {}
-					if not L_124_[1] then
-						L_124_[1] = 10
-					end
-					ticklon = tick()
-					repeat
-						task["wait"]()
-					until tick() - ticklon >= 1
-					L_125_[1] = function()
-						for L_126_forvar0 = 1, math["huge"], 1 do
-							local L_127_ = {}
-							L_127_[2] = L_126_forvar0
-							if ChooseRegion == nil or ChooseRegion == "" then
-								ChooseRegion = "Singapore"
-							else
-								(game:GetService("Players"))["LocalPlayer"]["PlayerGui"]["ServerBrowser"]["Frame"]["Filters"]["SearchRegion"]["TextBox"]["Text"] = ChooseRegion
-							end
-							L_127_[1] = (game:GetService("ReplicatedStorage"))["__ServerBrowser"]:InvokeServer(L_127_[2])
-							for L_128_forvar0, L_129_forvar1 in pairs(L_127_[1]) do
-								local L_130_ = {}
-								L_130_[2], L_130_[3] = L_128_forvar0, L_129_forvar1
-								if L_130_[2] ~= game["JobId"] and L_130_[3]["Count"] < L_124_[1] then
-									(game:GetService("ReplicatedStorage"))["__ServerBrowser"]:InvokeServer("teleport", L_130_[2])
-								end
+					task.wait(1)
+					local TeleportService = game:GetService("TeleportService")
+					local replicated = game:GetService("ReplicatedStorage")
+					local startPage = math.random(1, math.random(40, 75))
+					for i = startPage, 100, 1 do
+						local pageData = replicated["__ServerBrowser"]:InvokeServer(i)
+						if type(pageData) ~= "table" then break end
+						for jobId, sv in next, pageData do
+							if jobId ~= game["JobId"] and tonumber(sv["Count"]) and tonumber(sv["Count"]) < 12 then
+								TeleportService:TeleportToPlaceInstance(game.PlaceId, jobId)
+								return
 							end
 						end
-						return false
-					end
-					if not(getgenv())["Loaded"] then
-						local L_131_ = {}
-						L_131_[1] = function(L_132_arg0)
-							local L_133_ = {}
-							L_133_[1] = L_132_arg0
-							if L_133_[1]["Name"] == "ErrorPrompt" then
-								if L_133_[1]["Visible"] then
-									if L_133_[1]["TitleFrame"]["ErrorTitle"]["Text"] == "Teleport Failed" then
-										HopLowServer()
-										L_133_[1]["Visible"] = false
-									end
-								end;
-								(L_133_[1]:GetPropertyChangedSignal("Visible")):Connect(function()
-									if L_133_[1]["Visible"] then
-										if L_133_[1]["TitleFrame"]["ErrorTitle"]["Text"] == "Teleport Failed" then
-											HopLowServer()
-											L_133_[1]["Visible"] = false
-										end
-									end
-								end)
-							end
-						end
-						for L_134_forvar0, L_135_forvar1 in pairs(game["CoreGui"]["RobloxPromptGui"]["promptOverlay"]:GetChildren()) do
-							local L_136_ = {}
-							L_136_[3], L_136_[1] = L_134_forvar0, L_135_forvar1
-							L_131_[1](L_136_[1])
-						end
-						game["CoreGui"]["RobloxPromptGui"]["promptOverlay"]["ChildAdded"]:Connect(L_131_[1]);
-						(getgenv())["Loaded"] = true
-					end
-					while task["wait"](.1) do
-						L_125_[1]()
 					end
 				end)
 			end
@@ -6270,49 +6223,67 @@ task["spawn"](function()
 					end
 				until not L_1_[45]["CheckBoss"]("Smoke Admiral")
 			elseif Quest == "Wardens Sword" then
-				if not L_1_[45]["CheckBoss"]("Chief Warden") then
-					return
+				-- Auto Warden Sword (rewritten - TRon Void Hub style)
+				local _PRISON_WAIT_POS = CFrame.new(5186.14, 24.87, 832.19)
+				local _PRISON_ENTRANCE = Vector3.new(-7894.62, 5547.14, -380.29)
+				local _wardActive = true
+				local function _goToPrison()
+					if (L_1_[35]["Character"]["HumanoidRootPart"]["Position"] - _PRISON_ENTRANCE).Magnitude >= 7500 then
+						pcall(function()
+							L_1_[7]["Remotes"]["CommF_"]:InvokeServer("requestEntrance", _PRISON_ENTRANCE)
+						end)
+						task.wait(1.5)
+					end
 				end
+				local function _killWarden(warden)
+					repeat
+						L_1_[45]["wt"]()
+						if not warden or not warden.Parent or warden.Humanoid.Health <= 0 then break end
+						_goToPrison()
+						L_1_[31](warden["HumanoidRootPart"]["CFrame"] * CFrame.new(0, 35, 0), 1.5)
+						if not L_1_[45]["ffc"](L_1_[35]["Character"], "HasBuso") then
+							L_1_[7]["Remotes"]["CommF_"]:InvokeServer("Buso")
+						end
+						L_1_[14]()
+					until not warden or not warden.Parent or warden.Humanoid.Health <= 0 or not (getgenv())["AutoFarm"] or not _wardActive
+				end
+				local _waitTick = 0
 				repeat
 					L_1_[45]["wt"]()
-					if L_1_[45]["ffc"](L_1_[40], "Chief Warden") then
-						for L_463_forvar0, L_464_forvar1 in pairs(L_1_[40]:GetChildren()) do
-							local L_465_ = {}
-							L_465_[2], L_465_[1] = L_463_forvar0, L_464_forvar1
-							if L_465_[1]["Name"] == "Chief Warden" and L_465_[1]["Humanoid"]["Health"] > 0 then
-								repeat
-									L_1_[45]["wt"]()
-									if ((CFrame["new"](-7894.6181640625, 5547.1420898438, -380.29098510742))["Position"] - L_1_[35]["Character"]["HumanoidRootPart"]["Position"])["Magnitude"] >= 7500 then
-										((L_1_[7]:WaitForChild("Remotes")):WaitForChild("CommF_")):InvokeServer("requestEntrance", vector["create"](-7894.6181640625, 5547.1420898438, -380.29098510742))
-									end
-									L_1_[31](L_465_[1]["HumanoidRootPart"]["CFrame"] * CFrame["new"](0, 40, 0), 1.5)
-									if not L_1_[45]["ffc"](L_1_[35]["Character"], "HasBuso") then
-										L_1_[7]["Remotes"]["CommF_"]:InvokeServer("Buso")
-									end
-									L_1_[14]()
-								until not L_465_[1]["Parent"] or L_465_[1]["Humanoid"]["Health"] <= 0 or not(getgenv())["AutoFarm"] or not L_1_[45]["CheckBoss"]("Chief Warden")
-							end
+					local _found = false
+					-- Busca no Enemies
+					for _, v in pairs(L_1_[40]:GetChildren()) do
+						if v.Name == "Chief Warden" and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
+							_found = true
+							_goToPrison()
+							_killWarden(v)
+							break
 						end
-					elseif L_1_[45]["ffc"](L_1_[7], "Chief Warden") then
-						for L_466_forvar0, L_467_forvar1 in pairs(L_1_[7]:GetChildren()) do
-							local L_468_ = {}
-							L_468_[1], L_468_[2] = L_466_forvar0, L_467_forvar1
-							if L_468_[2]["Name"] == "Chief Warden" and L_468_[2]["Humanoid"]["Health"] > 0 then
-								repeat
-									L_1_[45]["wt"]()
-									if ((CFrame["new"](-7894.6181640625, 5547.1420898438, -380.29098510742))["Position"] - L_1_[35]["Character"]["HumanoidRootPart"]["Position"])["Magnitude"] >= 7500 then
-										((L_1_[7]:WaitForChild("Remotes")):WaitForChild("CommF_")):InvokeServer("requestEntrance", vector["create"](-7894.6181640625, 5547.1420898438, -380.29098510742))
-									end
-									L_1_[31](L_468_[2]["HumanoidRootPart"]["CFrame"] * CFrame["new"](0, 40, 0), 1.5)
-									if not L_1_[45]["ffc"](L_1_[35]["Character"], "HasBuso") then
-										L_1_[7]["Remotes"]["CommF_"]:InvokeServer("Buso")
-									end
-									L_1_[14]()
-								until not L_468_[2]["Parent"] or L_468_[2]["Humanoid"]["Health"] <= 0 or not(getgenv())["AutoFarm"] or not L_1_[45]["CheckBoss"]("Chief Warden")
+					end
+					-- Busca no ReplicatedStorage
+					if not _found then
+						for _, v in pairs(L_1_[7]:GetChildren()) do
+							if v.Name == "Chief Warden" and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
+								_found = true
+								_goToPrison()
+								_killWarden(v)
+								break
 							end
 						end
 					end
-				until not L_1_[45]["CheckBoss"]("Chief Warden")
+					-- Warden não spawnou: fica parado na prison esperando (sem teleportar)
+					if not _found then
+						_waitTick = _waitTick + 1
+						L_1_[45]["Status"](" Status : Warden Sword - Waiting Boss...")
+						-- Vai para posição de espera dentro da prisão (não sai da ilha)
+						if (L_1_[35]["Character"]["HumanoidRootPart"]["Position"] - Vector3.new(5186, 24, 832)).Magnitude > 80 then
+							_goToPrison()
+							task.wait(1)
+							L_1_[31](_PRISON_WAIT_POS, 1.5)
+						end
+						task.wait(3)
+					end
+				until not (getgenv())["AutoFarm"] or L_1_[45]["gi"]("Wardens Sword")
 			elseif Quest == "Magma Blaster" then
 				if not L_1_[45]["CheckBoss"]("Magma Admiral") then
 					return
@@ -8215,204 +8186,216 @@ end)
 
 -- ======================================================
 -- BUY FIGHT STYLES AUTO SYSTEM - TRon Void Ez Kaitun
+-- Fase 1: detecta estilos, vai pros NPCs em ordem, equipa
+-- Fase 2: quando trava num estilo, farma 400 (600 GodHuman)
+-- Combat: nunca precisa de 400 - vai direto pro Dark Step
 -- ======================================================
 task.spawn(function()
 	local RS = game:GetService("ReplicatedStorage")
-	local Players = game:GetService("Players")
-	local LP = Players.LocalPlayer
+	local LP = game:GetService("Players").LocalPlayer
 
+	-- Detecta Sea
 	local SEA = 1
 	if game.PlaceId == 4442272183 or game.PlaceId == 79091703265657 then SEA = 2
 	elseif game.PlaceId == 7449423635 or game.PlaceId == 100117331123089 then SEA = 3
 	end
 
+	-- Posições dos NPCs por Sea
 	local FS_NPC = {
-		DarkStep    = {[1]=Vector3.new(-988,13,3996),       [2]=Vector3.new(-4967,315,-3197),  [3]=Vector3.new(-5043,371,-3183)},
-		Electric    = {[1]=Vector3.new(-5382,14,-2150),     [2]=Vector3.new(-4864,35,-4768),   [3]=Vector3.new(-4993,315,-3198)},
-		WaterKungFu = {[1]=Vector3.new(61584,19,989),       [2]=Vector3.new(-4960,35,-4663),   [3]=Vector3.new(-5017,371,-3188)},
-		DragonBreath= {[2]=Vector3.new(-2066,69,-3307),     [3]=Vector3.new(-5010,315,-3202)},
-		DeathStep   = {[2]=Vector3.new(6360,297,-6764),     [3]=Vector3.new(-4998,315,-3220)},
+		DarkStep     = {[1]=Vector3.new(-988,13,3996),      [2]=Vector3.new(-4967,315,-3197),  [3]=Vector3.new(-5043,371,-3183)},
+		Electric     = {[1]=Vector3.new(-5382,14,-2150),    [2]=Vector3.new(-4864,35,-4768),   [3]=Vector3.new(-4993,315,-3198)},
+		WaterKungFu  = {[1]=Vector3.new(61584,19,989),      [2]=Vector3.new(-4960,35,-4663),   [3]=Vector3.new(-5017,371,-3188)},
+		DragonBreath = {[2]=Vector3.new(-2066,69,-3307),    [3]=Vector3.new(-5010,315,-3202)},
+		DeathStep    = {[2]=Vector3.new(6360,297,-6764),    [3]=Vector3.new(-4998,315,-3220)},
 		SharkmanKarate={[2]=Vector3.new(-2602,239,-10315),  [3]=Vector3.new(-4970,315,-3225)},
-		ElectricClaw= {[3]=Vector3.new(-10370,332,-10126)},
-		DragonTalon = {[3]=Vector3.new(5662,1211,859)},
-		Superhuman  = {[2]=Vector3.new(1378,247,-5189),     [3]=Vector3.new(-4998,371,-3197)},
-		GodHuman    = {[3]=Vector3.new(-13776,335,-9878)},
+		ElectricClaw = {[3]=Vector3.new(-10370,332,-10126)},
+		DragonTalon  = {[3]=Vector3.new(5662,1211,859)},
+		Superhuman   = {[2]=Vector3.new(1378,247,-5189),    [3]=Vector3.new(-4998,371,-3197)},
+		GodHuman     = {[3]=Vector3.new(-13776,335,-9878)},
 	}
-
 	local FS_REMOTE = {
-		DarkStep     = "BuyDarkStep",
-		Electric     = "BuyElectro",
-		WaterKungFu  = "BuyWaterKungFu",
-		DragonBreath = "BuyDragonBreath",
-		DeathStep    = "BuyDeathStep",
-		SharkmanKarate = "BuySharkmanKarate",
-		ElectricClaw = "BuyElectricClaw",
-		DragonTalon  = "BuyDragonTalon",
-		Superhuman   = "BuySuperhuman",
-		GodHuman     = "BuyGodhuman",
+		DarkStep="BuyDarkStep", Electric="BuyElectro", WaterKungFu="BuyWaterKungFu",
+		DragonBreath="BuyDragonBreath", DeathStep="BuyDeathStep",
+		SharkmanKarate="BuySharkmanKarate", ElectricClaw="BuyElectricClaw",
+		DragonTalon="BuyDragonTalon", Superhuman="BuySuperhuman", GodHuman="BuyGodhuman",
 	}
-
-	local FS_DISPLAY = {
-		DarkStep     = "Dark Step",
-		Electric     = "Electric",
-		WaterKungFu  = "Water Kung Fu",
-		DragonBreath = "Dragon Breath",
-		DeathStep    = "Death Step",
-		SharkmanKarate = "Sharkman Karate",
-		ElectricClaw = "Electric Claw",
-		DragonTalon  = "Dragon Talon",
-		Superhuman   = "Superhuman",
-		GodHuman     = "GodHuman",
-	}
-
 	local FS_INGAME = {
-		DarkStep     = "Dark Step",
-		Electric     = "Electric",
-		WaterKungFu  = "Water Kung Fu",
-		DragonBreath = "Dragon Breath",
-		DeathStep    = "Death Step",
-		SharkmanKarate = "Sharkman Karate",
-		ElectricClaw = "Electric Claw",
-		DragonTalon  = "Dragon Talon",
-		Superhuman   = "Superhuman",
-		GodHuman     = "GodHuman",
+		DarkStep="Dark Step", Electric="Electric", WaterKungFu="Water Kung Fu",
+		DragonBreath="Dragon Breath", DeathStep="Death Step",
+		SharkmanKarate="Sharkman Karate", ElectricClaw="Electric Claw",
+		DragonTalon="Dragon Talon", Superhuman="Superhuman", GodHuman="GodHuman",
 	}
-
+	local FS_DISPLAY = FS_INGAME  -- alias
+	-- Mastery alvo por estilo (Combat = 0 pois não é listado; GodHuman = 600)
+	local FS_TARGET = {
+		DarkStep=400, Electric=400, WaterKungFu=400, DragonBreath=400,
+		DeathStep=400, SharkmanKarate=400, ElectricClaw=400,
+		DragonTalon=400, Superhuman=400, GodHuman=600,
+	}
 	local FS_ORDER = {
 		"DarkStep","Electric","WaterKungFu","DragonBreath",
 		"DeathStep","ElectricClaw","SharkmanKarate","DragonTalon",
 		"Superhuman","GodHuman",
 	}
 
-	local function HRP()
+	-- Helpers
+	local function getHRP()
 		return LP.Character and LP.Character:FindFirstChild("HumanoidRootPart")
 	end
 
 	local function tpTo(pos)
-		local hrp = HRP()
-		if not hrp then return end
+		local hrp = getHRP(); if not hrp then return end
 		local LV = Instance.new("LinearVelocity")
 		local att = hrp:FindFirstChildOfClass("Attachment") or Instance.new("Attachment", hrp)
-		LV.Attachment0 = att; LV.MaxForce = math.huge
-		LV.VectorVelocity = Vector3.zero; LV.Parent = hrp
-		local start = tick()
+		LV.Attachment0 = att; LV.MaxForce = math.huge; LV.VectorVelocity = Vector3.zero; LV.Parent = hrp
+		local t0 = tick()
 		repeat
 			task.wait()
-			local hrp2 = HRP()
-			if not hrp2 then break end
-			local delta = pos - hrp2.Position
-			local dist = delta.Magnitude
-			if dist > 3 then
-				LV.VectorVelocity = delta.Unit * math.clamp(dist * 6, 80, 280)
+			hrp = getHRP(); if not hrp then break end
+			local d = pos - hrp.Position
+			local m = d.Magnitude
+			if m > 3 then
+				LV.VectorVelocity = d.Unit * math.clamp(m * 6, 80, 280)
 			else
 				LV.VectorVelocity = Vector3.zero
-				hrp2.CFrame = CFrame.new(pos)
+				pcall(function() hrp.CFrame = CFrame.new(pos) end)
 			end
-		until (HRP() and (HRP().Position - pos).Magnitude <= 4) or tick()-start > 30
+		until (getHRP() and (getHRP().Position - pos).Magnitude <= 5) or tick()-t0 > 30
 		pcall(function() LV:Destroy() end)
 	end
 
-	local function getStyleMastery(styleName)
-		local char = LP.Character
-		if not char then return 0 end
-		local tool = char:FindFirstChild(styleName) or LP.Backpack:FindFirstChild(styleName)
-		if tool and tool:FindFirstChild("Mastery") then
-			return tool.Mastery.Value
-		end
+	local function hasStyle(name)
+		if not LP.Character then return false end
+		return LP.Character:FindFirstChild(name) ~= nil or LP.Backpack:FindFirstChild(name) ~= nil
+	end
+
+	local function getMastery(name)
+		local tool = (LP.Character and LP.Character:FindFirstChild(name)) or LP.Backpack:FindFirstChild(name)
+		if tool and tool:FindFirstChild("Mastery") then return tool.Mastery.Value end
 		return 0
 	end
 
-	local function hasStyle(styleName)
-		local char = LP.Character
-		if not char then return false end
-		return char:FindFirstChild(styleName) ~= nil or LP.Backpack:FindFirstChild(styleName) ~= nil
-	end
-
-	local function equipStyle(styleName)
-		for i = 1, 10 do
-			pcall(function()
-				RS.Remotes.CommF_:InvokeServer("EquipTool", styleName)
-			end)
+	local function tryEquip(name)
+		for _ = 1, 6 do
+			pcall(function() RS.Remotes.CommF_:InvokeServer("EquipTool", name) end)
 			task.wait(0.5)
-			if LP.Character and LP.Character:FindFirstChild(styleName) then return true end
+			if LP.Character and LP.Character:FindFirstChild(name) then return true end
 		end
 		return false
 	end
 
-	local function updateFSStatus(currentKey, nextKey)
-		pcall(function()
-			local cur = currentKey and FS_DISPLAY[currentKey] or "N/A"
-			local nxt = nextKey and FS_DISPLAY[nextKey] or "Done!"
-			local mast = currentKey and getStyleMastery(FS_INGAME[currentKey]) or 0
-			if _G.TRonNextFS then _G.TRonNextFS.Text = "Status: Farming for " .. nxt end
-			if _G.TRonCurFS  then _G.TRonCurFS.Text  = "Style: " .. cur .. "  |  Mastery: " .. tostring(mast) .. "/400" end
-		end)
-	end
-
-	local function buyStyle(key)
+	local function tryBuy(key)
 		local pos = FS_NPC[key] and FS_NPC[key][SEA]
-		if not pos then return false end
-		local remote = FS_REMOTE[key]
-		for attempt = 1, 5 do
-			tpTo(pos)
-			task.wait(0.5)
-			local res = pcall(function()
-				RS.Remotes.CommF_:InvokeServer(remote)
-			end)
+		if not pos then return hasStyle(FS_INGAME[key]) end
+		-- Pausa enquanto fruta no chão
+		if SROP then repeat task.wait(1) until not SROP end
+		if _G.TRonFarmLabel then _G.TRonFarmLabel.Text = " Status : FS - Indo ao NPC " .. FS_INGAME[key] end
+		tpTo(pos)
+		task.wait(0.5)
+		for _ = 1, 3 do
+			pcall(function() RS.Remotes.CommF_:InvokeServer(FS_REMOTE[key]) end)
 			task.wait(1)
 			if hasStyle(FS_INGAME[key]) then return true end
 		end
 		return hasStyle(FS_INGAME[key])
 	end
 
-	local function farmMastery(key, targetMastery)
-		targetMastery = targetMastery or 400
-		local displayName = FS_INGAME[key]
-		equipStyle(displayName)
-		while getStyleMastery(displayName) < targetMastery do
+	local function setUI(curKey, nextKey)
+		pcall(function()
+			local curName = curKey and FS_INGAME[curKey] or "N/A"
+			local nextName = nextKey and FS_INGAME[nextKey] or "GodHuman ✅"
+			local target = curKey and FS_TARGET[curKey] or 0
+			local mast = curKey and getMastery(FS_INGAME[curKey]) or 0
+			if _G.TRonNextFS then _G.TRonNextFS.Text = "Prox: " .. nextName end
+			if _G.TRonCurFS  then _G.TRonCurFS.Text  = curName .. "  " .. tostring(mast) .. "/" .. tostring(target) end
+		end)
+	end
+
+	local function farmMastery(key)
+		local name = FS_INGAME[key]
+		local target = FS_TARGET[key]
+		tryEquip(name)
+		if _G.TRonFarmLabel then _G.TRonFarmLabel.Text = " Status : Farmando maestria - " .. name end
+		while getMastery(name) < target do
+			if not (getgenv())["AutoFarm"] then break end
 			if SROP then task.wait(1); continue end
-			updateFSStatus(key, FS_ORDER[table.find(FS_ORDER, key) + 1] or nil)
+			setUI(key, FS_ORDER[table.find(FS_ORDER, key)+1])
 			task.wait(2)
 		end
 	end
 
-	-- Wait for game to be fully loaded and AutoFarm to be active
+	-- ── Aguarda UI carregar e AutoFarm ativar ──────────────────
 	repeat task.wait(3) until (getgenv())["AutoFarm"]
-	task.wait(10)
+	task.wait(8)
 
+	-- ── Fase 1: Scan e equipa estilos já desbloqueados ─────────
+	-- Vai em ordem aos NPCs e equipa qualquer estilo já disponível
+	if _G.TRonNextFS then _G.TRonNextFS.Text = "Iniciando Fight Styles..." end
+	task.wait(2)
+
+	local lastOwnedIdx = 0
 	for i, key in ipairs(FS_ORDER) do
-		local displayName = FS_INGAME[key]
-		local nextKey = FS_ORDER[i+1]
-
-		-- Update UI with next target
-		if _G.TRonNextFS then _G.TRonNextFS.Text = "Status: Farming for " .. FS_DISPLAY[key] end
-
-		-- Buy if not owned
-		if not hasStyle(displayName) then
-			-- Wait until we have enough beli/fragments
-			repeat
-				task.wait(5)
-			until (getgenv())["AutoFarm"] == false or hasStyle(displayName) or
-				(key ~= "GodHuman" and key ~= "DragonBreath" and L_1_[1] and L_1_[1].Value >= 150000) or
-				hasStyle(displayName)
-
-			if SROP then
-				repeat task.wait(1) until not SROP
+		local name = FS_INGAME[key]
+		local npcPos = FS_NPC[key] and FS_NPC[key][SEA]
+		if hasStyle(name) then
+			-- Já tem: vai pro NPC e equipa
+			if npcPos then
+				if _G.TRonFarmLabel then _G.TRonFarmLabel.Text = " Status : Equipando " .. name end
+				tpTo(npcPos)
+				task.wait(0.5)
+				tryEquip(name)
+				task.wait(0.5)
 			end
+			lastOwnedIdx = i
+			setUI(key, FS_ORDER[i+1])
+		else
+			-- Não tem: tenta comprar
+			if npcPos then
+				local bought = tryBuy(key)
+				if bought then
+					tryEquip(name)
+					lastOwnedIdx = i
+					setUI(key, FS_ORDER[i+1])
+					task.wait(1)
+				else
+					-- Não conseguiu comprar → Fase 2: farma com estilo anterior
+					break
+				end
+			end
+		end
+	end
 
-			buyStyle(key)
-			task.wait(2)
+	-- ── Fase 2: Loop principal de farm + compra ─────────────────
+	-- Começa do próximo após o último que já tinha
+	local startIdx = lastOwnedIdx + 1
+	for i = startIdx, #FS_ORDER do
+		local key = FS_ORDER[i]
+		local name = FS_INGAME[key]
+		local prevKey = FS_ORDER[i-1]
+
+		-- Se ainda não tem o estilo, farma o anterior até 400 (ou 600)
+		while not hasStyle(name) and (getgenv())["AutoFarm"] do
+			-- Farma mastery do estilo atual (prevKey) se existir
+			if prevKey and hasStyle(FS_INGAME[prevKey]) then
+				farmMastery(prevKey)
+			end
+			-- Tenta comprar
+			if SROP then repeat task.wait(1) until not SROP end
+			tryBuy(key)
+			task.wait(3)
 		end
 
-		-- Farm to 400 mastery
-		if hasStyle(displayName) then
-			farmMastery(key, 400)
-		end
+		if not (getgenv())["AutoFarm"] then break end
 
-		updateFSStatus(nextKey, FS_ORDER[i+2] or nil)
+		-- Tem o estilo: equipa e farma até target
+		tryEquip(name)
+		task.wait(1)
+		farmMastery(key)
+		setUI(key, FS_ORDER[i+1])
 		task.wait(2)
 	end
 
-	if _G.TRonNextFS then _G.TRonNextFS.Text = "Status: GodHuman DONE! ✅" end
-	if _G.TRonCurFS  then _G.TRonCurFS.Text  = "Style: GodHuman  |  Mastery: MAX" end
+	if _G.TRonNextFS then _G.TRonNextFS.Text = "Prox: GodHuman ✅ DONE" end
+	if _G.TRonCurFS  then _G.TRonCurFS.Text  = "GodHuman  600/600 MAX" end
+	if _G.TRonFarmLabel then _G.TRonFarmLabel.Text = " Status : Fight Styles COMPLETO!" end
 end)
