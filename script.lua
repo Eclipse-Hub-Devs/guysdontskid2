@@ -16,7 +16,7 @@ end;
 	["Sword"] = {
 		"Dual-Headed Blade",
 		"Smoke Admiral",
-		"Wardens Sword",
+
 		"Cutlass",
 		"Katana";
 		"Dual Katana";
@@ -256,94 +256,376 @@ task["spawn"](function()
 end)
 L_1_[43] = game:GetService("CoreGui")
 L_1_[6] = game:GetService("TweenService")
-if L_1_[43]:FindFirstChild("Status_UI") then
-	L_1_[43]["Status_UI"]:Destroy()
+
+local _GUI_BananaReady = false
+do
+    local Lighting = game:GetService("Lighting")
+    local blur = Instance.new("BlurEffect")
+    blur.Name = "TRonBlur"
+    blur.Size = 0
+    blur.Parent = Lighting
+
+    if game:GetService("CoreGui"):FindFirstChild("TRonVoidKaitunBig") then game:GetService("CoreGui"):FindFirstChild("TRonVoidKaitunBig"):Destroy() end
+    if game:GetService("CoreGui"):FindFirstChild("TRonVoidKaitunStatus") then game:GetService("CoreGui"):FindFirstChild("TRonVoidKaitunStatus"):Destroy() end
+    if game:GetService("CoreGui"):FindFirstChild("TRonVoidKaitunBtn") then game:GetService("CoreGui"):FindFirstChild("TRonVoidKaitunBtn"):Destroy() end
+
+    local CoinCard = Instance.new("ScreenGui")
+    CoinCard.Name = "TRonVoidKaitunBig"
+    CoinCard.Parent = game:GetService("CoreGui")
+    CoinCard.ResetOnSpawn = false
+    CoinCard.DisplayOrder = 20
+    CoinCard.Enabled = false
+
+    local DSH = Instance.new("Frame")
+    DSH.AnchorPoint = Vector2.new(0.5,0.5)
+    DSH.BackgroundTransparency = 1
+    DSH.Name = "DropShadowHolder"
+    DSH.Parent = CoinCard
+    DSH.Position = UDim2.new(0.5,0,0.5,0)
+    DSH.Size = UDim2.new(0,600,0,400)
+
+    local Main = Instance.new("Frame")
+    Main.AnchorPoint = Vector2.new(0.5,0.5)
+    Main.BackgroundColor3 = Color3.fromRGB(0,0,0)
+    Main.BackgroundTransparency = 0.4
+    Main.Name = "Main"
+    Main.Parent = DSH
+    Main.Position = UDim2.new(0.5,0,0.5,0)
+    Main.Size = UDim2.new(1,-47,1,-47)
+    Instance.new("UICorner",Main).CornerRadius = UDim.new(0,5)
+    local MainStroke = Instance.new("UIStroke",Main)
+    MainStroke.Color = Color3.fromRGB(90,0,160)
+    MainStroke.Thickness = 2.5
+
+    local function MkDiv(parent,pos,size)
+        local d = Instance.new("Frame",parent)
+        d.Name = "Divider"
+        d.BorderColor3 = Color3.fromRGB(27,42,53)
+        d.Position = pos
+        d.Size = size
+        d.BackgroundColor3 = Color3.fromRGB(90,0,160)
+        d.BackgroundTransparency = 0.5
+    end
+    MkDiv(Main,UDim2.new(0.15,0,0.15,0),UDim2.new(0.7,0,0,2))
+    MkDiv(Main,UDim2.new(0.10,0,0.75,0),UDim2.new(0.80,0,0,2))
+
+    local function MkLabel(parent,pos,size,text,anchor)
+        local l = Instance.new("TextLabel",parent)
+        l.BackgroundTransparency = 1
+        l.Position = pos
+        l.Size = size
+        l.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json",Enum.FontWeight.Bold,Enum.FontStyle.Normal)
+        l.Text = text
+        l.TextColor3 = Color3.fromRGB(220,200,255)
+        l.TextSize = 15
+        l.TextXAlignment = Enum.TextXAlignment.Left
+        l.TextYAlignment = Enum.TextYAlignment.Bottom
+        if anchor then l.AnchorPoint = anchor end
+        return l
+    end
+
+    local TitleLbl = Instance.new("TextLabel",Main)
+    TitleLbl.BackgroundTransparency = 0.999
+    TitleLbl.Name = "Top"
+    TitleLbl.AnchorPoint = Vector2.new(0.5,0)
+    TitleLbl.Position = UDim2.new(0.5,0,0.05,0)
+    TitleLbl.Size = UDim2.new(0,0,0,18)
+    TitleLbl.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json",Enum.FontWeight.Bold,Enum.FontStyle.Normal)
+    TitleLbl.Text = "TRon Void Hub Kaitun"
+    TitleLbl.TextColor3 = Color3.fromRGB(90,0,160)
+    TitleLbl.TextSize = 18
+    TitleLbl.TextYAlignment = Enum.TextYAlignment.Bottom
+
+    local AccTitle = Instance.new("TextLabel",Main)
+    AccTitle.BackgroundTransparency = 0.999
+    AccTitle.AnchorPoint = Vector2.new(0,0)
+    AccTitle.Position = UDim2.new(0.20,0,0.25,0)
+    AccTitle.Size = UDim2.new(0,0,0,18)
+    AccTitle.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json",Enum.FontWeight.Bold,Enum.FontStyle.Normal)
+    AccTitle.Text = "Account Stats"
+    AccTitle.TextColor3 = Color3.fromRGB(90,0,160)
+    AccTitle.TextSize = 16
+    AccTitle.TextYAlignment = Enum.TextYAlignment.Bottom
+
+    local ItemsTitle = Instance.new("TextLabel",Main)
+    ItemsTitle.BackgroundTransparency = 0.999
+    ItemsTitle.Position = UDim2.new(0.75,0,0.25,0)
+    ItemsTitle.Size = UDim2.new(0,0,0,18)
+    ItemsTitle.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json",Enum.FontWeight.Bold,Enum.FontStyle.Normal)
+    ItemsTitle.Text = "Account Items"
+    ItemsTitle.TextColor3 = Color3.fromRGB(90,0,160)
+    ItemsTitle.TextSize = 16
+    ItemsTitle.TextYAlignment = Enum.TextYAlignment.Bottom
+
+    local LevelLbl = MkLabel(Main,UDim2.new(0.07,0,0.35,0),UDim2.new(0,0,0,18),"Level: N/A    Third Sea: ❌")
+    LevelLbl.Name = "LevelLabel"
+    local RaceLbl = MkLabel(Main,UDim2.new(0.07,0,0.45,0),UDim2.new(0,0,0,18),"Race: N/A")
+    RaceLbl.Name = "RaceLabel"
+    local BeliLbl = MkLabel(Main,UDim2.new(0.07,0,0.55,0),UDim2.new(0,0,0,18),"Beli: N/A")
+    BeliLbl.Name = "BeliLabel"
+    local FragLbl = MkLabel(Main,UDim2.new(0.07,0,0.65,0),UDim2.new(0,33,0,18),"Frag: N/A")
+    FragLbl.Name = "FragLabel"
+    MkLabel(Main,UDim2.new(0.07,0,0.80,0),UDim2.new(0,0,0,18),"🔴 GodHuman").Name="GodHumanLbl"
+    MkLabel(Main,UDim2.new(0.07,0,0.90,0),UDim2.new(0,0,0,18),"🔴 Skull Guitar").Name="SkullLbl"
+    MkLabel(Main,UDim2.new(0.40,0,0.80,0),UDim2.new(0,0,0,18),"🔴 Curse Dual Katana").Name="CDKLbl"
+    MkLabel(Main,UDim2.new(0.40,0,0.90,0),UDim2.new(0,0,0,18),"🔴 Mirror Fractal").Name="MFLbl"
+    MkLabel(Main,UDim2.new(0.75,0,0.80,0),UDim2.new(0,0,0,18),"🔴 Valkyrie Helm").Name="VHLbl"
+    MkLabel(Main,UDim2.new(0.75,0,0.90,0),UDim2.new(0,0,0,18),"🔴 Pull Lever").Name="PLLbl"
+
+    local DropShadow = Instance.new("ImageLabel",DSH)
+    DropShadow.AnchorPoint = Vector2.new(0.5,0.5)
+    DropShadow.BackgroundTransparency = 1
+    DropShadow.Name = "DropShadow"
+    DropShadow.Position = UDim2.new(0.5,0,0.5,0)
+    DropShadow.Size = UDim2.new(1,47,1,47)
+    DropShadow.ZIndex = 0
+    DropShadow.Image = "rbxassetid://6015897843"
+    DropShadow.ImageTransparency = 0.25
+    DropShadow.ImageColor3 = Color3.fromRGB(0,0,0)
+
+    local StatusGui = Instance.new("ScreenGui")
+    StatusGui.Name = "TRonVoidKaitunStatus"
+    StatusGui.Parent = game:GetService("CoreGui")
+    StatusGui.ResetOnSpawn = false
+    StatusGui.DisplayOrder = 10
+    StatusGui.Enabled = true
+
+    local SFrame = Instance.new("Frame",StatusGui)
+    SFrame.Name = "DropShadow2Holder2"
+    SFrame.AnchorPoint = Vector2.new(0.5,0.5)
+    SFrame.BackgroundTransparency = 1
+    SFrame.BorderSizePixel = 0
+    SFrame.Position = UDim2.new(0.5,0,0.05,0)
+    SFrame.Size = UDim2.new(0,420,0,68)
+
+    local SDrop = Instance.new("ImageLabel",SFrame)
+    SDrop.Name = "DropShadow2"
+    SDrop.AnchorPoint = Vector2.new(0.5,0.5)
+    SDrop.BackgroundTransparency = 1
+    SDrop.BorderSizePixel = 0
+    SDrop.Position = UDim2.new(0.5,0,0.35,0)
+    SDrop.Size = UDim2.new(1,47,1,47)
+    SDrop.ZIndex = 0
+    SDrop.Image = "rbxassetid://6015897843"
+    SDrop.ImageColor3 = Color3.fromRGB(0,0,0)
+    SDrop.ImageTransparency = 0.5
+    SDrop.ScaleType = Enum.ScaleType.Slice
+    SDrop.SliceCenter = Rect.new(49,49,450,450)
+
+    local SMain = Instance.new("Frame",SDrop)
+    SMain.Name = "Main"
+    SMain.AnchorPoint = Vector2.new(0.5,0.5)
+    SMain.BackgroundColor3 = Color3.fromRGB(0,0,0)
+    SMain.BackgroundTransparency = 0.4
+    SMain.BorderSizePixel = 0
+    SMain.Position = UDim2.new(0.5,0,0.5,0)
+    SMain.Size = UDim2.new(1,-50,1,-55)
+    local SStroke = Instance.new("UIStroke",SMain)
+    SStroke.Color = Color3.fromRGB(90,0,160)
+    SStroke.Thickness = 2.5
+
+    local StatusTitle = Instance.new("TextLabel",SMain)
+    StatusTitle.Name = "Top2"
+    StatusTitle.AnchorPoint = Vector2.new(0.5,0)
+    StatusTitle.BackgroundTransparency = 1
+    StatusTitle.Position = UDim2.new(0.5,0,0,4)
+    StatusTitle.Size = UDim2.new(0,380,0,18)
+    StatusTitle.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json",Enum.FontWeight.Bold,Enum.FontStyle.Normal)
+    StatusTitle.Text = "TRon Void Hub Kaitun"
+    StatusTitle.TextColor3 = Color3.fromRGB(90,0,160)
+    StatusTitle.TextSize = 14
+    StatusTitle.TextWrapped = true
+
+    local StatusFarm = Instance.new("TextLabel",SMain)
+    StatusFarm.Name = "Under"
+    StatusFarm.AnchorPoint = Vector2.new(0.5,0)
+    StatusFarm.BackgroundTransparency = 0.999
+    StatusFarm.BorderSizePixel = 0
+    StatusFarm.Position = UDim2.new(0.5,0,0,25)
+    StatusFarm.Size = UDim2.new(0,400,0,18)
+    StatusFarm.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json",Enum.FontWeight.Bold,Enum.FontStyle.Normal)
+    StatusFarm.Text = "Status : TRon Void Hub Kaitun"
+    StatusFarm.TextColor3 = Color3.fromRGB(200,150,255)
+    StatusFarm.TextSize = 14
+
+    L_1_[26] = StatusFarm
+
+    local DiscordLbl = Instance.new("TextLabel",StatusGui)
+    DiscordLbl.AnchorPoint = Vector2.new(0.5,0.5)
+    DiscordLbl.BackgroundTransparency = 1
+    DiscordLbl.BorderSizePixel = 0
+    DiscordLbl.Position = UDim2.new(0.5,0,-0.025,0)
+    DiscordLbl.Size = UDim2.new(0,210,0,50)
+    DiscordLbl.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json",Enum.FontWeight.Bold,Enum.FontStyle.Normal)
+    DiscordLbl.Text = "TRon Void Hub Kaitun"
+    DiscordLbl.TextColor3 = Color3.fromRGB(90,0,160)
+    DiscordLbl.TextSize = 13
+
+    local BtnGui = Instance.new("ScreenGui")
+    BtnGui.Name = "TRonVoidKaitunBtn"
+    BtnGui.Parent = game:GetService("CoreGui")
+    BtnGui.DisplayOrder = 10
+
+    local BtnFrame = Instance.new("Frame",BtnGui)
+    BtnFrame.Name = "BtnFrame"
+    BtnFrame.AnchorPoint = Vector2.new(0.1,0.1)
+    BtnFrame.BackgroundColor3 = Color3.fromRGB(50,0,80)
+    BtnFrame.Position = UDim2.new(0,20,0.1,-6)
+    BtnFrame.Size = UDim2.new(0,50,0,50)
+    BtnFrame.Active = true
+    BtnFrame.Draggable = true
+    Instance.new("UICorner",BtnFrame).CornerRadius = UDim.new(1,0)
+    local BtnStroke = Instance.new("UIStroke",BtnFrame)
+    BtnStroke.Color = Color3.fromRGB(90,0,160)
+    BtnStroke.Thickness = 2
+
+    local BtnImg = Instance.new("ImageLabel",BtnFrame)
+    BtnImg.AnchorPoint = Vector2.new(0.5,0.5)
+    BtnImg.BackgroundTransparency = 1
+    BtnImg.Position = UDim2.new(0.5,0,0.5,0)
+    BtnImg.Size = UDim2.new(0,40,0,40)
+    BtnImg.Image = "rbxassetid://133779423735605"
+
+    local BtnClick = Instance.new("TextButton",BtnFrame)
+    BtnClick.BackgroundTransparency = 1
+    BtnClick.Size = UDim2.new(1,0,1,0)
+    BtnClick.Font = Enum.Font.SourceSans
+    BtnClick.Text = ""
+    BtnClick.TextColor3 = Color3.fromRGB(27,42,53)
+
+    local TweenService = game:GetService("TweenService")
+    local _uiState = 0
+    local origSize = UDim2.new(0,40,0,40)
+    local zoomSize = UDim2.new(0,30,0,30)
+    local tweenInfo = TweenInfo.new(0.2,Enum.EasingStyle.Quad,Enum.EasingDirection.Out)
+    local zoomedIn = false
+
+    BtnClick.MouseButton1Down:Connect(function()
+        if zoomedIn then
+            TweenService:Create(BtnImg,tweenInfo,{Size=origSize}):Play()
+        else
+            TweenService:Create(BtnImg,tweenInfo,{Size=zoomSize}):Play()
+        end
+        zoomedIn = not zoomedIn
+
+        _uiState = (_uiState % 2) + 1
+        if _uiState == 1 then
+            CoinCard.Enabled = true
+            StatusGui.Enabled = false
+            blur.Size = 20
+        else
+            CoinCard.Enabled = false
+            StatusGui.Enabled = true
+            blur.Size = 0
+        end
+    end)
+
+    task.spawn(function()
+        while task.wait(1) do
+            pcall(function()
+                local lp2 = game:GetService("Players").LocalPlayer
+                local lvl = lp2.Data.Level.Value
+                local beli = lp2.Data.Beli.Value
+                local frag = lp2.Data.Fragments.Value
+                LevelLbl.Text = "Level: "..lvl.."    Third Sea: "..(Three_World and "✅" or "❌")
+                BeliLbl.Text = "Beli: "..beli
+                FragLbl.Text = "Frag: "..frag
+                local race = lp2.Character and lp2.Character:FindFirstChild("Race") and lp2.Character.Race.Value or "N/A"
+                RaceLbl.Text = "Race: "..tostring(race)
+            end)
+        end
+    end)
+
+    _GUI_BananaReady = true
 end
-L_1_[11] = Instance["new"]("ScreenGui")
-L_1_[11]["Name"] = "Status_UI"
-L_1_[11]["ResetOnSpawn"] = false
-L_1_[11]["Parent"] = L_1_[43]
-L_1_[42] = Instance["new"]("Frame")
-L_1_[42]["Size"] = UDim2["new"](0, 420, 0, 70)
-L_1_[42]["Position"] = UDim2["new"](.5, 0, .07, 0)
-L_1_[42]["AnchorPoint"] = Vector2["new"](.5, 0)
-L_1_[42]["BackgroundColor3"] = Color3["fromRGB"](0, 0, 0)
-L_1_[42][L_1_[3]({
-	"BackgroundTransparen";
-	"cy"
-})] = .25
-L_1_[42]["BorderSizePixel"] = 3
-L_1_[42]["BorderColor3"] = Color3["fromRGB"](255, 220, 70)
-L_1_[42]["Parent"] = L_1_[11]
-L_1_[41] = Instance["new"]("UICorner")
-L_1_[41]["CornerRadius"] = UDim["new"](0, 6)
-L_1_[41]["Parent"] = L_1_[42]
-L_1_[12] = Instance["new"]("UIStroke")
-L_1_[12]["Thickness"] = 2
-L_1_[12]["Color"] = Color3["fromRGB"](255, 230, 120)
-L_1_[12]["ApplyStrokeMode"] = Enum["ApplyStrokeMode"]["Border"]
-L_1_[12]["Parent"] = L_1_[42]
-L_1_[15] = Instance["new"]("TextLabel")
-L_1_[15]["Size"] = UDim2["new"](1, -10, .5, 0)
-L_1_[15]["Position"] = UDim2["new"](.5, 0, 0, 5)
-L_1_[15]["AnchorPoint"] = Vector2["new"](.5, 0)
-L_1_[15][L_1_[3]({
-	"BackgroundTransparen",
-	"cy"
-})] = 1
-L_1_[15]["Text"] = "Gravity Hub - Kaitun"
-L_1_[15]["TextColor3"] = Color3["fromRGB"](255, 230, 120)
-L_1_[15]["TextSize"] = 18
-L_1_[15]["Font"] = Enum["Font"]["GothamBold"]
-L_1_[15]["TextXAlignment"] = Enum["TextXAlignment"]["Center"]
-L_1_[15]["TextYAlignment"] = Enum["TextYAlignment"]["Center"]
-L_1_[15]["Parent"] = L_1_[42]
-L_1_[26] = Instance["new"]("TextLabel")
-L_1_[26]["Size"] = UDim2["new"](1, -10, .5, 0)
-L_1_[26]["Position"] = UDim2["new"](.5, 0, .5, 0)
-L_1_[26]["AnchorPoint"] = Vector2["new"](.5, 0)
-L_1_[26][L_1_[3]({
-	"BackgroundTransparen";
-	"cy"
-})] = 1
-L_1_[26]["Text"] = "Status : TBoy Roblox"
-L_1_[26]["TextColor3"] = Color3["fromRGB"](255, 230, 120)
-L_1_[26]["TextSize"] = 16
-L_1_[26]["Font"] = Enum["Font"]["Gotham"]
-L_1_[26]["TextXAlignment"] = Enum["TextXAlignment"]["Center"]
-L_1_[26]["TextYAlignment"] = Enum["TextYAlignment"]["Center"]
-L_1_[26]["Parent"] = L_1_[42]
-task["spawn"](function()
-	while task["wait"]() do
-		local L_27_ = {}
-		L_27_[4] = L_1_[6]:Create(L_1_[12], TweenInfo["new"](1.2, Enum["EasingStyle"]["Quad"], Enum["EasingDirection"]["Out"]), {
-			["Color"] = Color3["fromRGB"](255, 255, 180)
-		})
-		L_27_[5] = L_1_[6]:Create(L_1_[12], TweenInfo["new"](1.2, Enum["EasingStyle"]["Quad"], Enum["EasingDirection"]["Out"]), {
-			["Color"] = Color3["fromRGB"](255, 200, 60)
-		})
-		L_27_[2] = L_1_[6]:Create(L_1_[15], TweenInfo["new"](1.2), {
-			["TextColor3"] = Color3["fromRGB"](255, 255, 180)
-		})
-		L_27_[3] = L_1_[6]:Create(L_1_[15], TweenInfo["new"](1.2), {
-			["TextColor3"] = Color3["fromRGB"](255, 200, 60)
-		})
-		L_27_[1] = L_1_[6]:Create(L_1_[26], TweenInfo["new"](1.2), {
-			["TextColor3"] = Color3["fromRGB"](255, 255, 180)
-		})
-		L_27_[7] = L_1_[6]:Create(L_1_[26], TweenInfo["new"](1.2), {
-			["TextColor3"] = Color3["fromRGB"](255, 200, 60)
-		})
-		L_27_[4]:Play()
-		L_27_[2]:Play()
-		L_27_[1]:Play()
-		L_27_[4]["Completed"]:Wait()
-		L_27_[5]:Play()
-		L_27_[3]:Play()
-		L_27_[7]:Play()
-		L_27_[5]["Completed"]:Wait()
-	end
-end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 if L_1_[30] == 2753915549 then
 	Old_World = true
 elseif L_1_[30] == 4442272183 then
@@ -352,6 +634,171 @@ elseif L_1_[30] == 7449423635 then
 	Three_World = true
 end
 L_1_[22] = (L_1_[5]:WaitForChild("Data")):WaitForChild("Level")
+
+do
+    local _rs = game:GetService("ReplicatedStorage")
+    local _lp = game:GetService("Players").LocalPlayer
+    local _ws = game:GetService("Workspace")
+    local _buyRunning = true
+    ;(getgenv())["AutoFarm"] = false
+
+    local function _GetSea()
+        local maxLv = 0
+        for _, v in pairs(_ws.Enemies:GetChildren()) do
+            if v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then
+                local lvl = tonumber(v.Name:match("%[Lv%. (%d+)%]") or "0")
+                if lvl > maxLv then maxLv = lvl end
+            end
+        end
+        if maxLv >= 1500 then return 3 elseif maxLv >= 700 then return 2 else return 1 end
+    end
+
+    local function _TP(cf)
+        pcall(function()
+            _lp.Character.HumanoidRootPart.CFrame = cf
+            task.wait(0.8)
+        end)
+    end
+
+    local function _SetStatus(s)
+        pcall(function() L_1_[26]["Text"] = s end)
+        pcall(function()
+            game:GetService("StarterGui"):SetCore("SendNotification",{Title="TRon",Text=s,Duration=4})
+        end)
+    end
+
+    local function _GetMastery(key)
+        local ok, v = pcall(function() return _lp.Data[key].Value end)
+        if ok and type(v) == "number" then return v end
+        return 0
+    end
+
+    local function _Equip(name)
+        pcall(function() _rs.Remotes.CommF_:InvokeServer("EquipWeapon",name) end)
+        task.wait(0.5)
+    end
+
+    local function _FarmToMastery(label, masteryKey, target)
+        _SetStatus("Farmando "..label.." ate mastery "..target.."...")
+        local deadline = tick() + 7200
+        repeat
+            task.wait(2)
+            pcall(function()
+                local char = _lp.Character
+                if char then
+                    local hrp = char:FindFirstChild("HumanoidRootPart")
+                    if hrp then
+                        local nearest = nil
+                        local nearDist = math.huge
+                        for _, e in pairs(_ws.Enemies:GetChildren()) do
+                            local erp = e:FindFirstChild("HumanoidRootPart")
+                            local eh = e:FindFirstChild("Humanoid")
+                            if erp and eh and eh.Health > 0 then
+                                local d = (erp.Position - hrp.Position).Magnitude
+                                if d < nearDist then nearDist = d; nearest = e end
+                            end
+                        end
+                        if nearest then
+                            hrp.CFrame = CFrame.new(nearest.HumanoidRootPart.Position) * CFrame.new(0,5,0)
+                        end
+                    end
+                end
+            end)
+        until _GetMastery(masteryKey) >= target or tick() > deadline
+    end
+
+    local sea = _GetSea()
+    _SetStatus("Sea detectado: "..sea..". Iniciando compra de estilos...")
+    task.wait(2)
+
+    local function _TrySeal(sea, s1, s2, s3)
+        if sea == 1 and s1 then _TP(s1)
+        elseif sea == 2 and s2 then _TP(s2)
+        elseif sea == 3 and s3 then _TP(s3) end
+    end
+
+    local _castle3 = CFrame.new(-5005,315,-7950)
+    local _castleSea2 = CFrame.new(-5545,300,-6100)
+
+    _SetStatus("Comprando Dark Step...")
+    _TrySeal(sea, CFrame.new(-1198,60,1605), _castleSea2, _castle3)
+    pcall(function() _rs.Remotes.CommF_:InvokeServer("BuyBlackLeg") end)
+    task.wait(1)
+    _Equip("BlackLeg")
+    _FarmToMastery("Dark Step","BlackLeg",400)
+
+    _SetStatus("Comprando Electric...")
+    _TrySeal(sea, CFrame.new(-5000,350,-6500), _castleSea2, _castle3)
+    pcall(function() _rs.Remotes.CommF_:InvokeServer("BuyElectro") end)
+    task.wait(1)
+    _Equip("Electro")
+    _FarmToMastery("Electric","Electro",400)
+
+    _SetStatus("Comprando Water Kung Fu...")
+    _TrySeal(sea, CFrame.new(61191,18.5,1819), _castleSea2, _castle3)
+    pcall(function() _rs.Remotes.CommF_:InvokeServer("BuyFishmanKarate") end)
+    task.wait(1)
+    _Equip("FishmanKarate")
+    _FarmToMastery("Water Kung Fu","FishmanKarate",400)
+
+    if sea >= 2 then
+        _SetStatus("Comprando Dragon Breath...")
+        _TrySeal(sea, nil, CFrame.new(-788,65,1130), _castle3)
+        pcall(function() _rs.Remotes.CommF_:InvokeServer("BuyDragonBreath") end)
+        task.wait(1)
+        _Equip("DragonBreath")
+        _FarmToMastery("Dragon Breath","DragonBreath",400)
+
+        _SetStatus("Comprando Death Step...")
+        _TrySeal(sea, nil, CFrame.new(-5000,350,-6100), _castle3)
+        pcall(function() _rs.Remotes.CommF_:InvokeServer("BuyDeathStep") end)
+        task.wait(1)
+        _Equip("DeathStep")
+        _FarmToMastery("Death Step","DeathStep",400)
+
+        _SetStatus("Comprando Sharkman Karate...")
+        _TrySeal(sea, nil, CFrame.new(-3000,100,3000), _castle3)
+        pcall(function() _rs.Remotes.CommF_:InvokeServer("BuySharkmanKarate") end)
+        task.wait(1)
+        _Equip("SharkmanKarate")
+        _FarmToMastery("Sharkman Karate","SharkmanKarate",400)
+
+        _SetStatus("Comprando Superhuman...")
+        _TrySeal(sea, nil, CFrame.new(2650,30,-2000), _castle3)
+        pcall(function() _rs.Remotes.CommF_:InvokeServer("BuySuperhuman") end)
+        task.wait(1)
+        _Equip("Superhuman")
+        _FarmToMastery("Superhuman","Superhuman",400)
+    end
+
+    if sea == 3 then
+        _SetStatus("Comprando Electric Claw...")
+        _TP(CFrame.new(-9500,150,-7000))
+        pcall(function() _rs.Remotes.CommF_:InvokeServer("BuyElectricClaw") end)
+        task.wait(1)
+        _Equip("ElectricClaw")
+        _FarmToMastery("Electric Claw","ElectricClaw",400)
+
+        _SetStatus("Comprando Dragon Talon...")
+        _TP(CFrame.new(-9500,150,-7000))
+        pcall(function() _rs.Remotes.CommF_:InvokeServer("BuyDragonTalon") end)
+        task.wait(1)
+        _Equip("DragonTalon")
+        _FarmToMastery("Dragon Talon","DragonTalon",400)
+
+        _SetStatus("Comprando Godhuman...")
+        _TP(CFrame.new(-9500,150,-7000))
+        pcall(function() _rs.Remotes.CommF_:InvokeServer("BuyGodhuman") end)
+        task.wait(1)
+        _SetStatus("Godhuman obtido! Iniciando farm normal...")
+    else
+        _SetStatus("Estilos de luta concluidos! Iniciando farm normal...")
+    end
+
+    task.wait(1)
+    _buyRunning = false
+end
+
 function CheckLevel2()
 	local L_28_ = {}
 	L_28_[2] = (game:GetService("Players"))["LocalPlayer"]["Data"]["Level"]["Value"]
@@ -3921,8 +4368,8 @@ task["spawn"](function()
 							Quest = "Shark Saw"
 							return
 						end
-						if L_1_[45]["tf"](Configs["Sword"], "Wardens Sword") and (L_1_[24]["Value"] >= 100 and (not L_1_[45]["gi"]("Wardens Sword") and (Old_World and L_1_[45]["CheckBoss"]("Chief Warden")))) then
-							Quest = "Wardens Sword"
+
+
 							return
 						end
 						if L_1_[45]["tf"](Configs["Sword"], "Pole (1st Form)") and (L_1_[24]["Value"] >= 100 and (not L_1_[45]["gi"]("Pole (1st Form)") and (Old_World and L_1_[45]["CheckBoss"]("Thunder God")))) then
@@ -5777,50 +6224,50 @@ task["spawn"](function()
 						end
 					end
 				until not L_1_[45]["CheckBoss"]("Smoke Admiral")
-			elseif Quest == "Wardens Sword" then
-				if not L_1_[45]["CheckBoss"]("Chief Warden") then
-					return
-				end
-				repeat
-					L_1_[45]["wt"]()
-					if L_1_[45]["ffc"](L_1_[40], "Chief Warden") then
-						for L_463_forvar0, L_464_forvar1 in pairs(L_1_[40]:GetChildren()) do
-							local L_465_ = {}
-							L_465_[2], L_465_[1] = L_463_forvar0, L_464_forvar1
-							if L_465_[1]["Name"] == "Chief Warden" and L_465_[1]["Humanoid"]["Health"] > 0 then
-								repeat
-									L_1_[45]["wt"]()
-									if ((CFrame["new"](-7894.6181640625, 5547.1420898438, -380.29098510742))["Position"] - L_1_[35]["Character"]["HumanoidRootPart"]["Position"])["Magnitude"] >= 7500 then
-										((L_1_[7]:WaitForChild("Remotes")):WaitForChild("CommF_")):InvokeServer("requestEntrance", vector["create"](-7894.6181640625, 5547.1420898438, -380.29098510742))
-									end
-									L_1_[31](L_465_[1]["HumanoidRootPart"]["CFrame"] * CFrame["new"](0, 40, 0), 1.5)
-									if not L_1_[45]["ffc"](L_1_[35]["Character"], "HasBuso") then
-										L_1_[7]["Remotes"]["CommF_"]:InvokeServer("Buso")
-									end
-									L_1_[14]()
-								until not L_465_[1]["Parent"] or L_465_[1]["Humanoid"]["Health"] <= 0 or not(getgenv())["AutoFarm"] or not L_1_[45]["CheckBoss"]("Chief Warden")
-							end
-						end
-					elseif L_1_[45]["ffc"](L_1_[7], "Chief Warden") then
-						for L_466_forvar0, L_467_forvar1 in pairs(L_1_[7]:GetChildren()) do
-							local L_468_ = {}
-							L_468_[1], L_468_[2] = L_466_forvar0, L_467_forvar1
-							if L_468_[2]["Name"] == "Chief Warden" and L_468_[2]["Humanoid"]["Health"] > 0 then
-								repeat
-									L_1_[45]["wt"]()
-									if ((CFrame["new"](-7894.6181640625, 5547.1420898438, -380.29098510742))["Position"] - L_1_[35]["Character"]["HumanoidRootPart"]["Position"])["Magnitude"] >= 7500 then
-										((L_1_[7]:WaitForChild("Remotes")):WaitForChild("CommF_")):InvokeServer("requestEntrance", vector["create"](-7894.6181640625, 5547.1420898438, -380.29098510742))
-									end
-									L_1_[31](L_468_[2]["HumanoidRootPart"]["CFrame"] * CFrame["new"](0, 40, 0), 1.5)
-									if not L_1_[45]["ffc"](L_1_[35]["Character"], "HasBuso") then
-										L_1_[7]["Remotes"]["CommF_"]:InvokeServer("Buso")
-									end
-									L_1_[14]()
-								until not L_468_[2]["Parent"] or L_468_[2]["Humanoid"]["Health"] <= 0 or not(getgenv())["AutoFarm"] or not L_1_[45]["CheckBoss"]("Chief Warden")
-							end
-						end
-					end
-				until not L_1_[45]["CheckBoss"]("The Saw")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 			elseif Quest == "Magma Blaster" then
 				if not L_1_[45]["CheckBoss"]("Magma Admiral") then
 					return
