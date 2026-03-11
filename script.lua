@@ -289,6 +289,7 @@ task.spawn(function()
     -- Status bar (top)
     local BStatus = Instance.new("ScreenGui")
     BStatus.Name = "TRonVoidStatus"
+    BStatus.Enabled = false
     BStatus.Parent = game:GetService("CoreGui")
     BStatus.ResetOnSpawn = false
     BStatus.DisplayOrder = 10
@@ -389,8 +390,7 @@ task.spawn(function()
     BToggleImg.BackgroundTransparency = 1
     BToggleImg.Position = UDim2.new(0.5, 0, 0.5, 0)
     BToggleImg.Size = UDim2.new(0, 36, 0, 36)
-    BToggleImg.Image = "rbxassetid://112485471724320"
-    BToggleImg.ImageColor3 = Color3.fromRGB(160, 0, 255)
+    BToggleImg.Image = "rbxassetid://133779423735605"
 
     local BToggleBtn = Instance.new("TextButton")
     BToggleBtn.Parent = BToggleFrame
@@ -700,6 +700,7 @@ L_1_[11] = Instance["new"]("ScreenGui")
 L_1_[11]["Name"] = "Status_UI"
 L_1_[11]["ResetOnSpawn"] = false
 L_1_[11]["Parent"] = L_1_[43]
+L_1_[11]["Enabled"] = false
 
 L_1_[42] = Instance["new"]("Frame")
 L_1_[42]["Size"] = UDim2["new"](0, 150, 0, 50)
@@ -3102,6 +3103,8 @@ setmetatable(L_1_[45], {
 				local L_168_ = {}
 				L_168_[2] = L_167_arg0
 				L_1_[26]["Text"] = L_168_[2]
+				if _G.TRonFarmLabel then _G.TRonFarmLabel.Text = L_168_[2] end
+				if _G.TRonStatusLabel then _G.TRonStatusLabel.Text = L_168_[2] end
 			end
 		elseif L_60_[3] == "GetQuest" then
 			return function(L_169_arg0)
