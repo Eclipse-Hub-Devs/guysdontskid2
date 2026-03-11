@@ -22,7 +22,7 @@ getgenv().TRonConfig = getgenv().TRonConfig or {
 	EatFruit              = true,
 	FruitToEat            = "",
 	SkyFarm               = true,   -- Farm NPCs direto do céu (Safe Mode)
-	SkyHeight             = 175,    -- Altura acima do NPC (studs) — recomendado 150~250
+	SkyHeight             = 52,     -- Altura acima do NPC (studs) — recomendado 40~80
 	AutoHop               = true,   -- Troca de servidor automaticamente
 	HopInterval           = 1800,   -- Intervalo entre hops (segundos) — padrão 30min
 }
@@ -116,39 +116,64 @@ local function getSwordMastery(name)
 	return m
 end
 
--- Equipa a arma certa dependendo da fase:
---   Antes do God Human  → arma Melee (estilo de luta) para acumular maestria
---   Depois do God Human → espada (Yama > Tushita > CDK) para acumular maestria
+-- Equipa a tool certa dependendo da fase.
+-- Estilos de luta SÃO tools no Backpack — precisam ser equipados com EquipTool.
+-- Fase pre-God Human  → equipa o estilo de luta mais avancado que tem
+-- Fase pos-God Human  → equipa espada: CDK > Tushita > Yama
 local function EquipWeaponForPhase()
 	pcall(function()
 		local char = LP.Character
 		if not char then return end
-		local hum = char:FindFirstChildOfClass("Humanoid")
+		local hum  = char:FindFirstChildOfClass("Humanoid")
 		if not hum then return end
 
-		local function equipTool(name)
-			local tool = LP.Backpack:FindFirstChild(name) or char:FindFirstChild(name)
-			if tool and not char:FindFirstChild(name) then
-				hum:EquipTool(tool)
+		-- Procura uma tool pelo nome no Backpack (nao equipa se ja esta equipada)
+		local function tryEquip(toolName)
+			-- Ja esta equipada no personagem?
+			if char:FindFirstChild(toolName) then return true end
+			local tool = LP.Backpack:FindFirstChild(toolName)
+			if tool then
+				pcall(function() hum:EquipTool(tool) end)
 				return true
 			end
-			return tool ~= nil
+			return false
+		end
+
+		-- Procura pelo nome parcial (ex: "God Human" pode aparecer como "GodHuman")
+		local function tryEquipPartial(partialName)
+			if char:FindFirstChild(partialName) then return true end
+			for _, tool in ipairs(LP.Backpack:GetChildren()) do
+				if tool:IsA("Tool") and tool.Name:lower():find(partialName:lower()) then
+					if not char:FindFirstChild(tool.Name) then
+						pcall(function() hum:EquipTool(tool) end)
+					end
+					return true
+				end
+			end
+			return false
 		end
 
 		if not GodHumanDone then
-			-- Fase Melee: equipa God Human se tiver, senão Dragon Talon, etc.
-			local meleeOrder = {"God Human","Dragon Talon","Electric Claw","Sharkman Karate","Death Step","Dragon Breath","Electric","Black Leg"}
-			for _, style in ipairs(meleeOrder) do
+			-- Fase Melee: equipa o melhor estilo disponivel no Backpack
+			-- Ordem: mais avancado primeiro
+			local styleOrder = {
+				"God Human", "Dragon Talon", "Electric Claw",
+				"Sharkman Karate", "Death Step", "Dragon Breath",
+				"Electric", "Black Leg"
+			}
+			for _, style in ipairs(styleOrder) do
 				if hasFightingStyle(style) then
-					-- Fighting styles não são tools — não precisa equipar, o jogo já usa automaticamente
-					break
+					-- Tenta equipar pelo nome exato, depois parcial
+					if tryEquip(style) or tryEquipPartial(style) then
+						return  -- equipou, sai
+					end
 				end
 			end
 		else
-			-- Fase Sword: equipa CDK > Tushita > Yama em ordem de prioridade
+			-- Fase Sword: CDK > Tushita > Yama
 			local swordOrder = {"Cursed Dual Katana", "Tushita", "Yama"}
 			for _, sw in ipairs(swordOrder) do
-				if equipTool(sw) then break end
+				if tryEquip(sw) or tryEquipPartial(sw) then return end
 			end
 		end
 	end)
@@ -311,41 +336,46 @@ end
 
 local Pos = CFrame.new(0,0,3.5)
 
--- ===== SKY FARM HELPER =====
--- Retorna posicao no ceu acima do mob, olhando para ele
--- O NPC nao consegue atingir o jogador nessa altura
+-- ===== SKY FARM =====
+-- Calcula CFrame no ceu acima do mob olhando para baixo
 local function GetSkyPos(mob)
 	local hrp = mob and mob:FindFirstChild("HumanoidRootPart")
 	if not hrp then return nil end
-	local h = math.clamp(getgenv().TRonConfig.SkyHeight or 175, 80, 400)
+	local h = math.clamp(getgenv().TRonConfig.SkyHeight or 52, 20, 120)
 	local above = hrp.Position + Vector3.new(0, h, 0)
-	-- Olha para baixo em direcao ao NPC (melhora o hit rate das skills)
-	return CFrame.new(above, hrp.Position)
+	return CFrame.new(above, hrp.Position)  -- olha para o NPC
 end
 
--- Reposiciona no ceu se o jogador saiu do ponto ideal
+-- Trava o jogador no ceu instantaneamente (TP, nao Tween) para manter posicao
 local function LockSky(mob)
 	if not getgenv().TRonConfig.SkyFarm then return end
 	local hrp = LP.Character and LP.Character:FindFirstChild("HumanoidRootPart")
 	local mobHRP = mob and mob:FindFirstChild("HumanoidRootPart")
 	if not hrp or not mobHRP then return end
-	local h = math.clamp(getgenv().TRonConfig.SkyHeight or 175, 80, 400)
+	local h = math.clamp(getgenv().TRonConfig.SkyHeight or 52, 20, 120)
 	local target = mobHRP.Position + Vector3.new(0, h, 0)
-	-- So reposiciona se desviou mais de 12 studs
-	if (hrp.Position - target).Magnitude > 12 then
-		TweenPlayer(CFrame.new(target, mobHRP.Position))
-	end
+	-- Reposiciona instantaneamente a cada iteracao do loop de ataque
+	hrp.CFrame = CFrame.new(target, mobHRP.Position)
 end
 
--- Unico ponto de entrada para mover ate o mob (normal ou sky)
+-- Ponto de entrada para navegacao ate o mob (tween normal / sky inicial)
+-- NOTA: para o loop de ataque use LockSky — nao MoveToMob
 local function MoveToMob(mob)
 	if not mob then return end
 	local mobHRP = mob:FindFirstChild("HumanoidRootPart")
 	if not mobHRP then return end
 	if getgenv().TRonConfig.SkyFarm then
+		-- Tween ate perto, depois TP final para a posicao exata no ceu
 		local skyPos = GetSkyPos(mob)
-		if skyPos then TweenPlayer(skyPos) end
-		LockSky(mob)
+		if skyPos then
+			local dist = (LP.Character.HumanoidRootPart.Position - skyPos.Position).Magnitude
+			if dist > 200 then
+				-- Longe: tween para perto do mob, depois TP pro ceu
+				TweenPlayer(CFrame.new(mobHRP.Position + Vector3.new(0, 8, 0)))
+			end
+			-- TP instantaneo para posicao no ceu
+			LP.Character.HumanoidRootPart.CFrame = skyPos
+		end
 	else
 		TweenPlayer(mobHRP.CFrame * Pos)
 	end
@@ -371,13 +401,26 @@ local FarmRunning = true
 local function KillMob(mob)
 	if not IsAlive(mob) then return end
 	local deadline = tick() + 60
-	-- Posiciona inicial antes do loop (sky ou chao)
+	-- Posiciona acima do mob (tween se longe, TP final no ceu)
 	MoveToMob(mob)
 	repeat
 		pcall(function()
 			AutoHaki()
-				MoveToMob(mob)
-			Attack()
+			if getgenv().TRonConfig.SkyFarm then
+				-- Sky mode: só trava posição no céu
+				-- O fast attack externo cuida dos ataques
+				LockSky(mob)
+			else
+				-- Farm normal: fica perto do NPC e ataca
+				local mobHRP = mob:FindFirstChild("HumanoidRootPart")
+				if mobHRP then
+					local hrp = LP.Character and LP.Character:FindFirstChild("HumanoidRootPart")
+					if hrp and (hrp.Position - mobHRP.Position).Magnitude > 15 then
+						hrp.CFrame = mobHRP.CFrame * Pos
+					end
+				end
+				Attack()
+			end
 		end)
 		task.wait(0.18)
 	until not IsAlive(mob) or not FarmRunning or tick() > deadline
@@ -660,10 +703,18 @@ local function DoFarmLevel()
 		TweenPlayer(CFrameQuest); task.wait(0.4)
 		SafeInvoke("StartQuest",NameQuest,LevelQuest); task.wait(0.4)
 	end
+	-- Garante estilo/espada equipada antes de atacar
+	pcall(EquipWeaponForPhase)
 	local mob=GetEnemy(Mon)
 	if mob and IsAlive(mob) then
 		MoveToMob(mob)
-		AutoHaki(); Attack()
+		AutoHaki()
+		if getgenv().TRonConfig.SkyFarm then
+			-- Sky mode: trava posição no céu, fast attack externo ataca
+			LockSky(mob)
+		else
+			Attack()
+		end
 	else TweenPlayer(CFrameMon) end
 end
 
@@ -747,11 +798,14 @@ local function AdvanceFightStyle()
 				else
 					setStatus("🦴 Farmando Bones ("..bone.."/500) para Dragon Talon")
 					local mob=GetEnemy("Possessed Mummy") or GetEnemy("Reaper") or GetEnemy("Cursed Skeleton")
-					if mob and IsAlive(mob) then MoveToMob(mob); AutoHaki(); Attack()
+					if mob and IsAlive(mob) then MoveToMob(mob); AutoHaki()
+					if not getgenv().TRonConfig.SkyFarm then Attack() end
+					if getgenv().TRonConfig.SkyFarm then LockSky(mob) end
 					else TweenPlayer(CFrame.new(5500,22,-3200)) end
 				end
 			else
 				setStatus("🥋 Treinando Electric Claw ["..getMastery("Electric Claw").."/400]")
+				pcall(EquipWeaponForPhase)
 				DoFarmLevel()
 			end
 			return true
@@ -762,6 +816,7 @@ local function AdvanceFightStyle()
 				GodHumanDone=hasGodHuman()
 			else
 				setStatus("🥋 Treinando Dragon Talon ["..getMastery("Dragon Talon").."/400]")
+				pcall(EquipWeaponForPhase)
 				DoFarmLevel()
 			end
 			return true
@@ -805,7 +860,9 @@ local function FarmYamaMastery()
 	SafeInvoke("StartQuest","YamaQuest",1); task.wait(0.3)
 	local mob = GetEnemy("Island Empress") or GetEnemy("Yama") or GetEnemy("Awakened Ice Admiral")
 	if mob and IsAlive(mob) then
-		MoveToMob(mob); AutoHaki(); Attack()
+		MoveToMob(mob); AutoHaki()
+					if not getgenv().TRonConfig.SkyFarm then Attack() end
+					if getgenv().TRonConfig.SkyFarm then LockSky(mob) end
 	else
 		TweenPlayer(CFrame.new(8037.26, 249.33, -1034.44))
 	end
@@ -819,7 +876,9 @@ local function FarmTushitaMastery()
 	SafeInvoke("StartQuest","TushitaQuest",1); task.wait(0.3)
 	local mob = GetEnemy("Longma") or GetEnemy("Tushita") or GetEnemy("Cursed Skeleton")
 	if mob and IsAlive(mob) then
-		MoveToMob(mob); AutoHaki(); Attack()
+		MoveToMob(mob); AutoHaki()
+					if not getgenv().TRonConfig.SkyFarm then Attack() end
+					if getgenv().TRonConfig.SkyFarm then LockSky(mob) end
 	else
 		TweenPlayer(CFrame.new(-12386.9, 364.3, -7590.2))
 	end
@@ -834,7 +893,9 @@ local function DoCDKQuest()
 		setStatus("⚔️ CDK: Farmando Yama (item)")
 		SafeInvoke("StartQuest","YamaQuest",1); task.wait(0.5)
 		local mob = GetEnemy("Island Empress") or GetEnemy("Yama")
-		if mob and IsAlive(mob) then MoveToMob(mob); AutoHaki(); Attack()
+		if mob and IsAlive(mob) then MoveToMob(mob); AutoHaki()
+					if not getgenv().TRonConfig.SkyFarm then Attack() end
+					if getgenv().TRonConfig.SkyFarm then LockSky(mob) end
 		else TweenPlayer(CFrame.new(8037.26, 249.33, -1034.44)) end
 		return
 	end
@@ -882,12 +943,16 @@ local function DoSkullGuitarQuest()
 	elseif ecto<250 then
 		setStatus("⚗️ Skull Guitar: Ecto no Navio Assombrado ("..ecto.."/250)")
 		local mob=GetEnemy("Zombie") or GetEnemy("Demonic Soul") or GetEnemy("Cursed Skeleton")
-		if mob and IsAlive(mob) then MoveToMob(mob); AutoHaki(); Attack()
+		if mob and IsAlive(mob) then MoveToMob(mob); AutoHaki()
+					if not getgenv().TRonConfig.SkyFarm then Attack() end
+					if getgenv().TRonConfig.SkyFarm then LockSky(mob) end
 		else TweenPlayer(CFrame.new(3898,22,-4100)) end
 	elseif bone<500 then
 		setStatus("🦴 Skull Guitar: Bones no Castelo Assombrado ("..bone.."/500)")
 		local mob=GetEnemy("Possessed Mummy") or GetEnemy("Reaper") or GetEnemy("Cursed Skeleton")
-		if mob and IsAlive(mob) then MoveToMob(mob); AutoHaki(); Attack()
+		if mob and IsAlive(mob) then MoveToMob(mob); AutoHaki()
+					if not getgenv().TRonConfig.SkyFarm then Attack() end
+					if getgenv().TRonConfig.SkyFarm then LockSky(mob) end
 		else TweenPlayer(CFrame.new(5500,22,-3200)) end
 	end
 end
@@ -904,7 +969,9 @@ local function DoTyrantOfSkies()
 	local npcs={"Isle Outlaw","Island Boy","Sun-kissed Warrior","Isle Champion","Serpent Hunter","Skull Slayer"}
 	for _,n in ipairs(npcs) do
 		local mob=GetEnemy(n)
-		if mob and IsAlive(mob) then MoveToMob(mob); AutoHaki(); Attack(); return end
+		if mob and IsAlive(mob) then MoveToMob(mob); AutoHaki()
+					if not getgenv().TRonConfig.SkyFarm then Attack() end
+					if getgenv().TRonConfig.SkyFarm then LockSky(mob) end; return end
 	end
 	TweenPlayer(CFrame.new(-16547,56,-172))
 end
@@ -963,7 +1030,9 @@ task.spawn(function()
 				elseif lv<150 then
 					setStatus("🌤️ Farm Sky Island Lv"..lv)
 					local mob=GetEnemy("Sky Bandit") or GetEnemy("Dark Master") or GetEnemy("Galley Captain")
-					if mob and IsAlive(mob) then MoveToMob(mob); AutoHaki(); Attack()
+					if mob and IsAlive(mob) then MoveToMob(mob); AutoHaki()
+					if not getgenv().TRonConfig.SkyFarm then Attack() end
+					if getgenv().TRonConfig.SkyFarm then LockSky(mob) end
 					else TweenPlayer(CFrame.new(-4953,296,-2899)) end
 				elseif not SaberDone and lv>=200 then DoSaberQuest()
 				elseif not HakiKenBought and beli>=750000 then
@@ -995,7 +1064,9 @@ task.spawn(function()
 					elseif ecto<250 then
 						setStatus("⚗️ Sea2: Farmando Ectoplasm ("..ecto.."/250)")
 						local mob=GetEnemy("Zombie") or GetEnemy("Demonic Soul")
-						if mob and IsAlive(mob) then MoveToMob(mob); AutoHaki(); Attack()
+						if mob and IsAlive(mob) then MoveToMob(mob); AutoHaki()
+					if not getgenv().TRonConfig.SkyFarm then Attack() end
+					if getgenv().TRonConfig.SkyFarm then LockSky(mob) end
 						else TweenPlayer(CFrame.new(3898,22,-4100)) end
 					else setStatus("✅ Sea2: Materiais prontos!") end
 					return
