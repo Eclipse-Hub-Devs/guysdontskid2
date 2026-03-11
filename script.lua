@@ -257,266 +257,164 @@ end)
 L_1_[43] = game:GetService("CoreGui")
 L_1_[6] = game:GetService("TweenService")
 
-local _GUI_BananaReady = false
+local _TRonStatusLabel = nil
 do
-    local Lighting = game:GetService("Lighting")
-    local blur = Instance.new("BlurEffect")
-    blur.Name = "TRonBlur"
-    blur.Size = 0
-    blur.Parent = Lighting
-
     if game:GetService("CoreGui"):FindFirstChild("TRonVoidKaitunBig") then game:GetService("CoreGui"):FindFirstChild("TRonVoidKaitunBig"):Destroy() end
     if game:GetService("CoreGui"):FindFirstChild("TRonVoidKaitunStatus") then game:GetService("CoreGui"):FindFirstChild("TRonVoidKaitunStatus"):Destroy() end
     if game:GetService("CoreGui"):FindFirstChild("TRonVoidKaitunBtn") then game:GetService("CoreGui"):FindFirstChild("TRonVoidKaitunBtn"):Destroy() end
 
+    local Lighting = game:GetService("Lighting")
+    local blur = Instance.new("BlurEffect")
+    blur.Name = "TRonBlur"; blur.Size = 0; blur.Parent = Lighting
+
     local CoinCard = Instance.new("ScreenGui")
     CoinCard.Name = "TRonVoidKaitunBig"
     CoinCard.Parent = game:GetService("CoreGui")
-    CoinCard.ResetOnSpawn = false
-    CoinCard.DisplayOrder = 20
-    CoinCard.Enabled = false
+    CoinCard.ResetOnSpawn = false; CoinCard.DisplayOrder = 20; CoinCard.Enabled = false
 
     local DSH = Instance.new("Frame")
-    DSH.AnchorPoint = Vector2.new(0.5,0.5)
-    DSH.BackgroundTransparency = 1
-    DSH.Name = "DropShadowHolder"
-    DSH.Parent = CoinCard
-    DSH.Position = UDim2.new(0.5,0,0.5,0)
-    DSH.Size = UDim2.new(0,600,0,400)
+    DSH.AnchorPoint = Vector2.new(0.5,0.5); DSH.BackgroundTransparency = 1
+    DSH.Name = "DropShadowHolder"; DSH.Parent = CoinCard
+    DSH.Position = UDim2.new(0.5,0,0.5,0); DSH.Size = UDim2.new(0,600,0,400)
 
     local Main = Instance.new("Frame")
-    Main.AnchorPoint = Vector2.new(0.5,0.5)
-    Main.BackgroundColor3 = Color3.fromRGB(0,0,0)
-    Main.BackgroundTransparency = 0.4
-    Main.Name = "Main"
-    Main.Parent = DSH
-    Main.Position = UDim2.new(0.5,0,0.5,0)
-    Main.Size = UDim2.new(1,-47,1,-47)
+    Main.AnchorPoint = Vector2.new(0.5,0.5); Main.BackgroundColor3 = Color3.fromRGB(0,0,0)
+    Main.BackgroundTransparency = 0.4; Main.Name = "Main"; Main.Parent = DSH
+    Main.Position = UDim2.new(0.5,0,0.5,0); Main.Size = UDim2.new(1,-47,1,-47)
     Instance.new("UICorner",Main).CornerRadius = UDim.new(0,5)
-    local MainStroke = Instance.new("UIStroke",Main)
-    MainStroke.Color = Color3.fromRGB(90,0,160)
-    MainStroke.Thickness = 2.5
+    local MS = Instance.new("UIStroke",Main)
+    MS.Color = Color3.fromRGB(90,0,160); MS.Thickness = 2.5
 
-    local function MkDiv(parent,pos,size)
-        local d = Instance.new("Frame",parent)
-        d.Name = "Divider"
-        d.BorderColor3 = Color3.fromRGB(27,42,53)
-        d.Position = pos
-        d.Size = size
-        d.BackgroundColor3 = Color3.fromRGB(90,0,160)
-        d.BackgroundTransparency = 0.5
+    local function Div(p,pos,size)
+        local d = Instance.new("Frame",p); d.Name = "Divider"
+        d.BackgroundColor3 = Color3.fromRGB(90,0,160); d.BackgroundTransparency = 0.5
+        d.BorderSizePixel = 0; d.Position = pos; d.Size = size
     end
-    MkDiv(Main,UDim2.new(0.15,0,0.15,0),UDim2.new(0.7,0,0,2))
-    MkDiv(Main,UDim2.new(0.10,0,0.75,0),UDim2.new(0.80,0,0,2))
+    Div(Main,UDim2.new(0.15,0,0.15,0),UDim2.new(0.7,0,0,2))
+    Div(Main,UDim2.new(0.10,0,0.75,0),UDim2.new(0.80,0,0,2))
 
-    local function MkLabel(parent,pos,size,text,anchor)
-        local l = Instance.new("TextLabel",parent)
-        l.BackgroundTransparency = 1
-        l.Position = pos
-        l.Size = size
+    local function Lbl(p,pos,text,name)
+        local l = Instance.new("TextLabel",p); l.BackgroundTransparency = 1
+        l.Position = pos; l.Size = UDim2.new(0,0,0,18)
         l.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json",Enum.FontWeight.Bold,Enum.FontStyle.Normal)
-        l.Text = text
-        l.TextColor3 = Color3.fromRGB(220,200,255)
-        l.TextSize = 15
-        l.TextXAlignment = Enum.TextXAlignment.Left
+        l.Text = text; l.TextColor3 = Color3.fromRGB(200,150,255)
+        l.TextSize = 15; l.TextXAlignment = Enum.TextXAlignment.Left
         l.TextYAlignment = Enum.TextYAlignment.Bottom
-        if anchor then l.AnchorPoint = anchor end
-        return l
+        if name then l.Name = name end; return l
     end
 
-    local TitleLbl = Instance.new("TextLabel",Main)
-    TitleLbl.BackgroundTransparency = 0.999
-    TitleLbl.Name = "Top"
-    TitleLbl.AnchorPoint = Vector2.new(0.5,0)
-    TitleLbl.Position = UDim2.new(0.5,0,0.05,0)
-    TitleLbl.Size = UDim2.new(0,0,0,18)
-    TitleLbl.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json",Enum.FontWeight.Bold,Enum.FontStyle.Normal)
-    TitleLbl.Text = "TRon Void Hub Kaitun"
-    TitleLbl.TextColor3 = Color3.fromRGB(90,0,160)
-    TitleLbl.TextSize = 18
-    TitleLbl.TextYAlignment = Enum.TextYAlignment.Bottom
+    local Title = Instance.new("TextLabel",Main)
+    Title.BackgroundTransparency = 0.999; Title.AnchorPoint = Vector2.new(0.5,0)
+    Title.Position = UDim2.new(0.5,0,0.05,0); Title.Size = UDim2.new(0,0,0,18)
+    Title.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json",Enum.FontWeight.Bold,Enum.FontStyle.Normal)
+    Title.Text = "TRon Void Hub Kaitun"; Title.TextColor3 = Color3.fromRGB(90,0,160)
+    Title.TextSize = 18; Title.TextYAlignment = Enum.TextYAlignment.Bottom
 
-    local AccTitle = Instance.new("TextLabel",Main)
-    AccTitle.BackgroundTransparency = 0.999
-    AccTitle.AnchorPoint = Vector2.new(0,0)
-    AccTitle.Position = UDim2.new(0.20,0,0.25,0)
-    AccTitle.Size = UDim2.new(0,0,0,18)
-    AccTitle.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json",Enum.FontWeight.Bold,Enum.FontStyle.Normal)
-    AccTitle.Text = "Account Stats"
-    AccTitle.TextColor3 = Color3.fromRGB(90,0,160)
-    AccTitle.TextSize = 16
-    AccTitle.TextYAlignment = Enum.TextYAlignment.Bottom
+    local function SecLbl(p,pos,text)
+        local l = Instance.new("TextLabel",p); l.BackgroundTransparency = 0.999
+        l.Position = pos; l.Size = UDim2.new(0,0,0,18)
+        l.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json",Enum.FontWeight.Bold,Enum.FontStyle.Normal)
+        l.Text = text; l.TextColor3 = Color3.fromRGB(90,0,160)
+        l.TextSize = 16; l.TextYAlignment = Enum.TextYAlignment.Bottom; return l
+    end
+    SecLbl(Main,UDim2.new(0.20,0,0.25,0),"Account Stats")
+    SecLbl(Main,UDim2.new(0.75,0,0.25,0),"Account Items")
 
-    local ItemsTitle = Instance.new("TextLabel",Main)
-    ItemsTitle.BackgroundTransparency = 0.999
-    ItemsTitle.Position = UDim2.new(0.75,0,0.25,0)
-    ItemsTitle.Size = UDim2.new(0,0,0,18)
-    ItemsTitle.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json",Enum.FontWeight.Bold,Enum.FontStyle.Normal)
-    ItemsTitle.Text = "Account Items"
-    ItemsTitle.TextColor3 = Color3.fromRGB(90,0,160)
-    ItemsTitle.TextSize = 16
-    ItemsTitle.TextYAlignment = Enum.TextYAlignment.Bottom
+    local LevelLbl = Lbl(Main,UDim2.new(0.07,0,0.35,0),"Level: N/A","LevelLabel")
+    local RaceLbl  = Lbl(Main,UDim2.new(0.07,0,0.45,0),"Race: N/A","RaceLabel")
+    local BeliLbl  = Lbl(Main,UDim2.new(0.07,0,0.55,0),"Beli: N/A","BeliLabel")
+    local FragLbl  = Lbl(Main,UDim2.new(0.07,0,0.65,0),"Frag: N/A","FragLabel")
+    Lbl(Main,UDim2.new(0.07,0,0.80,0),"🔴 GodHuman","GodHumanLbl")
+    Lbl(Main,UDim2.new(0.07,0,0.90,0),"🔴 Skull Guitar","SkullLbl")
+    Lbl(Main,UDim2.new(0.40,0,0.80,0),"🔴 Curse Dual Katana","CDKLbl")
+    Lbl(Main,UDim2.new(0.40,0,0.90,0),"🔴 Mirror Fractal","MFLbl")
+    Lbl(Main,UDim2.new(0.75,0,0.80,0),"🔴 Valkyrie Helm","VHLbl")
+    Lbl(Main,UDim2.new(0.75,0,0.90,0),"🔴 Pull Lever","PLLbl")
 
-    local LevelLbl = MkLabel(Main,UDim2.new(0.07,0,0.35,0),UDim2.new(0,0,0,18),"Level: N/A    Third Sea: ❌")
-    LevelLbl.Name = "LevelLabel"
-    local RaceLbl = MkLabel(Main,UDim2.new(0.07,0,0.45,0),UDim2.new(0,0,0,18),"Race: N/A")
-    RaceLbl.Name = "RaceLabel"
-    local BeliLbl = MkLabel(Main,UDim2.new(0.07,0,0.55,0),UDim2.new(0,0,0,18),"Beli: N/A")
-    BeliLbl.Name = "BeliLabel"
-    local FragLbl = MkLabel(Main,UDim2.new(0.07,0,0.65,0),UDim2.new(0,33,0,18),"Frag: N/A")
-    FragLbl.Name = "FragLabel"
-    MkLabel(Main,UDim2.new(0.07,0,0.80,0),UDim2.new(0,0,0,18),"🔴 GodHuman").Name="GodHumanLbl"
-    MkLabel(Main,UDim2.new(0.07,0,0.90,0),UDim2.new(0,0,0,18),"🔴 Skull Guitar").Name="SkullLbl"
-    MkLabel(Main,UDim2.new(0.40,0,0.80,0),UDim2.new(0,0,0,18),"🔴 Curse Dual Katana").Name="CDKLbl"
-    MkLabel(Main,UDim2.new(0.40,0,0.90,0),UDim2.new(0,0,0,18),"🔴 Mirror Fractal").Name="MFLbl"
-    MkLabel(Main,UDim2.new(0.75,0,0.80,0),UDim2.new(0,0,0,18),"🔴 Valkyrie Helm").Name="VHLbl"
-    MkLabel(Main,UDim2.new(0.75,0,0.90,0),UDim2.new(0,0,0,18),"🔴 Pull Lever").Name="PLLbl"
-
-    local DropShadow = Instance.new("ImageLabel",DSH)
-    DropShadow.AnchorPoint = Vector2.new(0.5,0.5)
-    DropShadow.BackgroundTransparency = 1
-    DropShadow.Name = "DropShadow"
-    DropShadow.Position = UDim2.new(0.5,0,0.5,0)
-    DropShadow.Size = UDim2.new(1,47,1,47)
-    DropShadow.ZIndex = 0
-    DropShadow.Image = "rbxassetid://6015897843"
-    DropShadow.ImageTransparency = 0.25
-    DropShadow.ImageColor3 = Color3.fromRGB(0,0,0)
+    local DS2 = Instance.new("ImageLabel",DSH)
+    DS2.AnchorPoint = Vector2.new(0.5,0.5); DS2.BackgroundTransparency = 1
+    DS2.Name = "DropShadow"; DS2.Position = UDim2.new(0.5,0,0.5,0)
+    DS2.Size = UDim2.new(1,47,1,47); DS2.ZIndex = 0
+    DS2.Image = "rbxassetid://6015897843"; DS2.ImageTransparency = 0.25
+    DS2.ImageColor3 = Color3.fromRGB(0,0,0)
 
     local StatusGui = Instance.new("ScreenGui")
-    StatusGui.Name = "TRonVoidKaitunStatus"
-    StatusGui.Parent = game:GetService("CoreGui")
-    StatusGui.ResetOnSpawn = false
-    StatusGui.DisplayOrder = 10
-    StatusGui.Enabled = true
+    StatusGui.Name = "TRonVoidKaitunStatus"; StatusGui.Parent = game:GetService("CoreGui")
+    StatusGui.ResetOnSpawn = false; StatusGui.DisplayOrder = 10; StatusGui.Enabled = true
 
     local SFrame = Instance.new("Frame",StatusGui)
-    SFrame.Name = "DropShadow2Holder2"
-    SFrame.AnchorPoint = Vector2.new(0.5,0.5)
-    SFrame.BackgroundTransparency = 1
-    SFrame.BorderSizePixel = 0
-    SFrame.Position = UDim2.new(0.5,0,0.05,0)
+    SFrame.AnchorPoint = Vector2.new(0.5,0.5); SFrame.BackgroundTransparency = 1
+    SFrame.BorderSizePixel = 0; SFrame.Position = UDim2.new(0.5,0,0.05,0)
     SFrame.Size = UDim2.new(0,420,0,68)
 
     local SDrop = Instance.new("ImageLabel",SFrame)
-    SDrop.Name = "DropShadow2"
-    SDrop.AnchorPoint = Vector2.new(0.5,0.5)
-    SDrop.BackgroundTransparency = 1
-    SDrop.BorderSizePixel = 0
-    SDrop.Position = UDim2.new(0.5,0,0.35,0)
-    SDrop.Size = UDim2.new(1,47,1,47)
-    SDrop.ZIndex = 0
-    SDrop.Image = "rbxassetid://6015897843"
-    SDrop.ImageColor3 = Color3.fromRGB(0,0,0)
-    SDrop.ImageTransparency = 0.5
-    SDrop.ScaleType = Enum.ScaleType.Slice
+    SDrop.AnchorPoint = Vector2.new(0.5,0.5); SDrop.BackgroundTransparency = 1
+    SDrop.BorderSizePixel = 0; SDrop.Position = UDim2.new(0.5,0,0.35,0)
+    SDrop.Size = UDim2.new(1,47,1,47); SDrop.ZIndex = 0
+    SDrop.Image = "rbxassetid://6015897843"; SDrop.ImageColor3 = Color3.fromRGB(0,0,0)
+    SDrop.ImageTransparency = 0.5; SDrop.ScaleType = Enum.ScaleType.Slice
     SDrop.SliceCenter = Rect.new(49,49,450,450)
 
     local SMain = Instance.new("Frame",SDrop)
-    SMain.Name = "Main"
-    SMain.AnchorPoint = Vector2.new(0.5,0.5)
-    SMain.BackgroundColor3 = Color3.fromRGB(0,0,0)
-    SMain.BackgroundTransparency = 0.4
-    SMain.BorderSizePixel = 0
-    SMain.Position = UDim2.new(0.5,0,0.5,0)
-    SMain.Size = UDim2.new(1,-50,1,-55)
+    SMain.AnchorPoint = Vector2.new(0.5,0.5); SMain.BackgroundColor3 = Color3.fromRGB(0,0,0)
+    SMain.BackgroundTransparency = 0.4; SMain.BorderSizePixel = 0
+    SMain.Position = UDim2.new(0.5,0,0.5,0); SMain.Size = UDim2.new(1,-50,1,-55)
     local SStroke = Instance.new("UIStroke",SMain)
-    SStroke.Color = Color3.fromRGB(90,0,160)
-    SStroke.Thickness = 2.5
+    SStroke.Color = Color3.fromRGB(90,0,160); SStroke.Thickness = 2.5
 
-    local StatusTitle = Instance.new("TextLabel",SMain)
-    StatusTitle.Name = "Top2"
-    StatusTitle.AnchorPoint = Vector2.new(0.5,0)
-    StatusTitle.BackgroundTransparency = 1
-    StatusTitle.Position = UDim2.new(0.5,0,0,4)
-    StatusTitle.Size = UDim2.new(0,380,0,18)
-    StatusTitle.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json",Enum.FontWeight.Bold,Enum.FontStyle.Normal)
-    StatusTitle.Text = "TRon Void Hub Kaitun"
-    StatusTitle.TextColor3 = Color3.fromRGB(90,0,160)
-    StatusTitle.TextSize = 14
-    StatusTitle.TextWrapped = true
+    local STitleLbl = Instance.new("TextLabel",SMain)
+    STitleLbl.AnchorPoint = Vector2.new(0.5,0); STitleLbl.BackgroundTransparency = 1
+    STitleLbl.Position = UDim2.new(0.5,0,0,4); STitleLbl.Size = UDim2.new(0,380,0,18)
+    STitleLbl.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json",Enum.FontWeight.Bold,Enum.FontStyle.Normal)
+    STitleLbl.Text = "TRon Void Hub Kaitun"; STitleLbl.TextColor3 = Color3.fromRGB(90,0,160)
+    STitleLbl.TextSize = 14; STitleLbl.TextWrapped = true
 
     local StatusFarm = Instance.new("TextLabel",SMain)
-    StatusFarm.Name = "Under"
-    StatusFarm.AnchorPoint = Vector2.new(0.5,0)
-    StatusFarm.BackgroundTransparency = 0.999
-    StatusFarm.BorderSizePixel = 0
-    StatusFarm.Position = UDim2.new(0.5,0,0,25)
-    StatusFarm.Size = UDim2.new(0,400,0,18)
+    StatusFarm.Name = "Under"; StatusFarm.AnchorPoint = Vector2.new(0.5,0)
+    StatusFarm.BackgroundTransparency = 0.999; StatusFarm.BorderSizePixel = 0
+    StatusFarm.Position = UDim2.new(0.5,0,0,25); StatusFarm.Size = UDim2.new(0,400,0,18)
     StatusFarm.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json",Enum.FontWeight.Bold,Enum.FontStyle.Normal)
-    StatusFarm.Text = "Status : TRon Void Hub Kaitun"
-    StatusFarm.TextColor3 = Color3.fromRGB(200,150,255)
+    StatusFarm.Text = "Status : Iniciando..."; StatusFarm.TextColor3 = Color3.fromRGB(200,150,255)
     StatusFarm.TextSize = 14
 
+    _TRonStatusLabel = StatusFarm
     L_1_[26] = StatusFarm
 
-    local DiscordLbl = Instance.new("TextLabel",StatusGui)
-    DiscordLbl.AnchorPoint = Vector2.new(0.5,0.5)
-    DiscordLbl.BackgroundTransparency = 1
-    DiscordLbl.BorderSizePixel = 0
-    DiscordLbl.Position = UDim2.new(0.5,0,-0.025,0)
-    DiscordLbl.Size = UDim2.new(0,210,0,50)
-    DiscordLbl.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json",Enum.FontWeight.Bold,Enum.FontStyle.Normal)
-    DiscordLbl.Text = "TRon Void Hub Kaitun"
-    DiscordLbl.TextColor3 = Color3.fromRGB(90,0,160)
-    DiscordLbl.TextSize = 13
-
     local BtnGui = Instance.new("ScreenGui")
-    BtnGui.Name = "TRonVoidKaitunBtn"
-    BtnGui.Parent = game:GetService("CoreGui")
+    BtnGui.Name = "TRonVoidKaitunBtn"; BtnGui.Parent = game:GetService("CoreGui")
     BtnGui.DisplayOrder = 10
 
     local BtnFrame = Instance.new("Frame",BtnGui)
-    BtnFrame.Name = "BtnFrame"
-    BtnFrame.AnchorPoint = Vector2.new(0.1,0.1)
+    BtnFrame.Name = "BtnFrame"; BtnFrame.AnchorPoint = Vector2.new(0.1,0.1)
     BtnFrame.BackgroundColor3 = Color3.fromRGB(50,0,80)
-    BtnFrame.Position = UDim2.new(0,20,0.1,-6)
-    BtnFrame.Size = UDim2.new(0,50,0,50)
-    BtnFrame.Active = true
-    BtnFrame.Draggable = true
+    BtnFrame.Position = UDim2.new(0,20,0.1,-6); BtnFrame.Size = UDim2.new(0,50,0,50)
+    BtnFrame.Active = true; BtnFrame.Draggable = true
     Instance.new("UICorner",BtnFrame).CornerRadius = UDim.new(1,0)
-    local BtnStroke = Instance.new("UIStroke",BtnFrame)
-    BtnStroke.Color = Color3.fromRGB(90,0,160)
-    BtnStroke.Thickness = 2
+    local BStroke = Instance.new("UIStroke",BtnFrame)
+    BStroke.Color = Color3.fromRGB(90,0,160); BStroke.Thickness = 2
 
     local BtnImg = Instance.new("ImageLabel",BtnFrame)
-    BtnImg.AnchorPoint = Vector2.new(0.5,0.5)
-    BtnImg.BackgroundTransparency = 1
-    BtnImg.Position = UDim2.new(0.5,0,0.5,0)
-    BtnImg.Size = UDim2.new(0,40,0,40)
+    BtnImg.AnchorPoint = Vector2.new(0.5,0.5); BtnImg.BackgroundTransparency = 1
+    BtnImg.Position = UDim2.new(0.5,0,0.5,0); BtnImg.Size = UDim2.new(0,40,0,40)
     BtnImg.Image = "rbxassetid://133779423735605"
 
     local BtnClick = Instance.new("TextButton",BtnFrame)
-    BtnClick.BackgroundTransparency = 1
-    BtnClick.Size = UDim2.new(1,0,1,0)
-    BtnClick.Font = Enum.Font.SourceSans
-    BtnClick.Text = ""
-    BtnClick.TextColor3 = Color3.fromRGB(27,42,53)
+    BtnClick.BackgroundTransparency = 1; BtnClick.Size = UDim2.new(1,0,1,0)
+    BtnClick.Font = Enum.Font.SourceSans; BtnClick.Text = ""
 
     local TweenService = game:GetService("TweenService")
-    local _uiState = 0
-    local origSize = UDim2.new(0,40,0,40)
-    local zoomSize = UDim2.new(0,30,0,30)
-    local tweenInfo = TweenInfo.new(0.2,Enum.EasingStyle.Quad,Enum.EasingDirection.Out)
-    local zoomedIn = false
+    local _uiState = 0; local zoomedIn = false
+    local twInfo = TweenInfo.new(0.2,Enum.EasingStyle.Quad,Enum.EasingDirection.Out)
+    local origSz = UDim2.new(0,40,0,40); local zoomSz = UDim2.new(0,30,0,30)
 
     BtnClick.MouseButton1Down:Connect(function()
-        if zoomedIn then
-            TweenService:Create(BtnImg,tweenInfo,{Size=origSize}):Play()
-        else
-            TweenService:Create(BtnImg,tweenInfo,{Size=zoomSize}):Play()
-        end
+        TweenService:Create(BtnImg,twInfo,{Size = zoomedIn and origSz or zoomSz}):Play()
         zoomedIn = not zoomedIn
-
         _uiState = (_uiState % 2) + 1
         if _uiState == 1 then
-            CoinCard.Enabled = true
-            StatusGui.Enabled = false
-            blur.Size = 20
+            CoinCard.Enabled = true; StatusGui.Enabled = false; blur.Size = 20
         else
-            CoinCard.Enabled = false
-            StatusGui.Enabled = true
-            blur.Size = 0
+            CoinCard.Enabled = false; StatusGui.Enabled = true; blur.Size = 0
         end
     end)
 
@@ -524,19 +422,14 @@ do
         while task.wait(1) do
             pcall(function()
                 local lp2 = game:GetService("Players").LocalPlayer
-                local lvl = lp2.Data.Level.Value
-                local beli = lp2.Data.Beli.Value
-                local frag = lp2.Data.Fragments.Value
-                LevelLbl.Text = "Level: "..lvl.."    Third Sea: "..(Three_World and "✅" or "❌")
-                BeliLbl.Text = "Beli: "..beli
-                FragLbl.Text = "Frag: "..frag
-                local race = lp2.Character and lp2.Character:FindFirstChild("Race") and lp2.Character.Race.Value or "N/A"
-                RaceLbl.Text = "Race: "..tostring(race)
+                LevelLbl.Text = "Level: "..lp2.Data.Level.Value.."    Third Sea: "..(Three_World and "✅" or "❌")
+                BeliLbl.Text  = "Beli: "..lp2.Data.Beli.Value
+                FragLbl.Text  = "Frag: "..lp2.Data.Fragments.Value
+                local r = lp2.Character and lp2.Character:FindFirstChild("Race")
+                RaceLbl.Text  = "Race: "..(r and tostring(r.Value) or "N/A")
             end)
         end
     end)
-
-    _GUI_BananaReady = true
 end
 
 
@@ -635,23 +528,13 @@ elseif L_1_[30] == 7449423635 then
 end
 L_1_[22] = (L_1_[5]:WaitForChild("Data")):WaitForChild("Level")
 
-do
+task.spawn(function()
     local _rs = game:GetService("ReplicatedStorage")
     local _lp = game:GetService("Players").LocalPlayer
     local _ws = game:GetService("Workspace")
-    local _buyRunning = true
-    ;(getgenv())["AutoFarm"] = false
 
-    local function _GetSea()
-        local maxLv = 0
-        for _, v in pairs(_ws.Enemies:GetChildren()) do
-            if v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then
-                local lvl = tonumber(v.Name:match("%[Lv%. (%d+)%]") or "0")
-                if lvl > maxLv then maxLv = lvl end
-            end
-        end
-        if maxLv >= 1500 then return 3 elseif maxLv >= 700 then return 2 else return 1 end
-    end
+    repeat task.wait(1) until (getgenv())["AutoFarm"] == true
+    task.wait(3)
 
     local function _TP(cf)
         pcall(function()
@@ -662,9 +545,6 @@ do
 
     local function _SetStatus(s)
         pcall(function() L_1_[26]["Text"] = s end)
-        pcall(function()
-            game:GetService("StarterGui"):SetCore("SendNotification",{Title="TRon",Text=s,Duration=4})
-        end)
     end
 
     local function _GetMastery(key)
@@ -673,131 +553,135 @@ do
         return 0
     end
 
+    local function _GetBeli()
+        local ok, v = pcall(function() return _lp.Data.Beli.Value end)
+        if ok then return v end; return 0
+    end
+
+    local function _GetFrags()
+        local ok, v = pcall(function() return _lp.Data.Fragments.Value end)
+        if ok then return v end; return 0
+    end
+
     local function _Equip(name)
-        pcall(function() _rs.Remotes.CommF_:InvokeServer("EquipWeapon",name) end)
+        pcall(function() _rs.Remotes.CommF_:InvokeServer("EquipWeapon", name) end)
         task.wait(0.5)
     end
 
-    local function _FarmToMastery(label, masteryKey, target)
-        _SetStatus("Farmando "..label.." ate mastery "..target.."...")
-        local deadline = tick() + 7200
+    local function _FarmToMastery(label, masteryKey, target, equipName)
+        _Equip(equipName)
+        _SetStatus("Farmando "..label.." mastery "..target.."...")
+        local deadline = tick() + 10800
         repeat
-            task.wait(2)
-            pcall(function()
-                local char = _lp.Character
-                if char then
-                    local hrp = char:FindFirstChild("HumanoidRootPart")
-                    if hrp then
-                        local nearest = nil
-                        local nearDist = math.huge
-                        for _, e in pairs(_ws.Enemies:GetChildren()) do
-                            local erp = e:FindFirstChild("HumanoidRootPart")
-                            local eh = e:FindFirstChild("Humanoid")
-                            if erp and eh and eh.Health > 0 then
-                                local d = (erp.Position - hrp.Position).Magnitude
-                                if d < nearDist then nearDist = d; nearest = e end
-                            end
-                        end
-                        if nearest then
-                            hrp.CFrame = CFrame.new(nearest.HumanoidRootPart.Position) * CFrame.new(0,5,0)
-                        end
-                    end
-                end
-            end)
+            task.wait(10)
+            local m = _GetMastery(masteryKey)
+            _SetStatus("Farmando "..label..": mastery "..m.."/"..target)
         until _GetMastery(masteryKey) >= target or tick() > deadline
     end
 
-    local sea = _GetSea()
-    _SetStatus("Sea detectado: "..sea..". Iniciando compra de estilos...")
-    task.wait(2)
-
-    local function _TrySeal(sea, s1, s2, s3)
-        if sea == 1 and s1 then _TP(s1)
-        elseif sea == 2 and s2 then _TP(s2)
-        elseif sea == 3 and s3 then _TP(s3) end
+    local function _TryBuy(label, masteryKey, equipName, beliCost, fragCost, tpFunc, remoteId)
+        while true do
+            local beli  = _GetBeli()
+            local frags = _GetFrags()
+            local needB = beliCost and beli  < beliCost
+            local needF = fragCost and frags < fragCost
+            if needB or needF then
+                local msg = "Farmando para "..label.."..."
+                if needB then msg = msg.." Beli:"..beli.."/"..beliCost end
+                if needF then msg = msg.." Frags:"..frags.."/"..fragCost end
+                _SetStatus(msg)
+                task.wait(60)
+            else
+                _SetStatus("Comprando "..label.."...")
+                tpFunc()
+                pcall(function() _rs.Remotes.CommF_:InvokeServer(remoteId) end)
+                task.wait(1.5)
+                _Equip(equipName)
+                task.wait(1)
+                local m = _GetMastery(masteryKey)
+                if m ~= nil then
+                    _SetStatus(label.." obtido! Iniciando farm mastery...")
+                    return
+                end
+                _SetStatus(label.." falhou, tentando novamente em 30s...")
+                task.wait(30)
+            end
+        end
     end
 
-    local _castle3 = CFrame.new(-5005,315,-7950)
-    local _castleSea2 = CFrame.new(-5545,300,-6100)
+    local maxLv = 0
+    for _, v in pairs(_ws.Enemies:GetChildren()) do
+        if v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then
+            local lv = tonumber(v.Name:match("%[Lv%. (%d+)%]") or "0")
+            if lv > maxLv then maxLv = lv end
+        end
+    end
+    local sea = maxLv >= 1500 and 3 or maxLv >= 700 and 2 or 1
+    _SetStatus("Sea: "..sea.." | Iniciando sequencia de estilos...")
+    task.wait(2)
 
-    _SetStatus("Comprando Dark Step...")
-    _TrySeal(sea, CFrame.new(-1198,60,1605), _castleSea2, _castle3)
-    pcall(function() _rs.Remotes.CommF_:InvokeServer("BuyBlackLeg") end)
-    task.wait(1)
-    _Equip("BlackLeg")
-    _FarmToMastery("Dark Step","BlackLeg",400)
+    local c3 = CFrame.new(-5005,315,-7950)
+    local c2 = CFrame.new(-5545,300,-6100)
 
-    _SetStatus("Comprando Electric...")
-    _TrySeal(sea, CFrame.new(-5000,350,-6500), _castleSea2, _castle3)
-    pcall(function() _rs.Remotes.CommF_:InvokeServer("BuyElectro") end)
-    task.wait(1)
-    _Equip("Electro")
-    _FarmToMastery("Electric","Electro",400)
+    _TryBuy("Dark Step","BlackLeg","BlackLeg",150000,nil,function()
+        if sea==1 then _TP(CFrame.new(-1198,60,1605))
+        elseif sea==2 then _TP(c2) else _TP(c3) end
+    end,"BuyBlackLeg")
+    _FarmToMastery("Dark Step","BlackLeg",400,"BlackLeg")
 
-    _SetStatus("Comprando Water Kung Fu...")
-    _TrySeal(sea, CFrame.new(61191,18.5,1819), _castleSea2, _castle3)
-    pcall(function() _rs.Remotes.CommF_:InvokeServer("BuyFishmanKarate") end)
-    task.wait(1)
-    _Equip("FishmanKarate")
-    _FarmToMastery("Water Kung Fu","FishmanKarate",400)
+    _TryBuy("Electric","Electro","Electro",500000,nil,function()
+        if sea==1 then _TP(CFrame.new(-5000,350,-6500))
+        elseif sea==2 then _TP(c2) else _TP(c3) end
+    end,"BuyElectro")
+    _FarmToMastery("Electric","Electro",400,"Electro")
+
+    _TryBuy("Water Kung Fu","FishmanKarate","FishmanKarate",750000,nil,function()
+        if sea==1 then _TP(CFrame.new(61191,18.5,1819))
+        elseif sea==2 then _TP(c2) else _TP(c3) end
+    end,"BuyFishmanKarate")
+    _FarmToMastery("Water Kung Fu","FishmanKarate",400,"FishmanKarate")
 
     if sea >= 2 then
-        _SetStatus("Comprando Dragon Breath...")
-        _TrySeal(sea, nil, CFrame.new(-788,65,1130), _castle3)
-        pcall(function() _rs.Remotes.CommF_:InvokeServer("BuyDragonBreath") end)
-        task.wait(1)
-        _Equip("DragonBreath")
-        _FarmToMastery("Dragon Breath","DragonBreath",400)
+        _TryBuy("Dragon Breath","DragonBreath","DragonBreath",nil,1500,function()
+            if sea==2 then _TP(CFrame.new(-788,65,1130)) else _TP(c3) end
+        end,"BuyDragonBreath")
+        _FarmToMastery("Dragon Breath","DragonBreath",400,"DragonBreath")
 
-        _SetStatus("Comprando Death Step...")
-        _TrySeal(sea, nil, CFrame.new(-5000,350,-6100), _castle3)
-        pcall(function() _rs.Remotes.CommF_:InvokeServer("BuyDeathStep") end)
-        task.wait(1)
-        _Equip("DeathStep")
-        _FarmToMastery("Death Step","DeathStep",400)
+        _TryBuy("Death Step","DeathStep","DeathStep",2500000,5000,function()
+            if sea==2 then _TP(CFrame.new(-5000,350,-6100)) else _TP(c3) end
+        end,"BuyDeathStep")
+        _FarmToMastery("Death Step","DeathStep",400,"DeathStep")
 
-        _SetStatus("Comprando Sharkman Karate...")
-        _TrySeal(sea, nil, CFrame.new(-3000,100,3000), _castle3)
-        pcall(function() _rs.Remotes.CommF_:InvokeServer("BuySharkmanKarate") end)
-        task.wait(1)
-        _Equip("SharkmanKarate")
-        _FarmToMastery("Sharkman Karate","SharkmanKarate",400)
+        _TryBuy("Sharkman Karate","SharkmanKarate","SharkmanKarate",2500000,5000,function()
+            if sea==2 then _TP(CFrame.new(-3000,100,3000)) else _TP(c3) end
+        end,"BuySharkmanKarate")
+        _FarmToMastery("Sharkman Karate","SharkmanKarate",400,"SharkmanKarate")
 
-        _SetStatus("Comprando Superhuman...")
-        _TrySeal(sea, nil, CFrame.new(2650,30,-2000), _castle3)
-        pcall(function() _rs.Remotes.CommF_:InvokeServer("BuySuperhuman") end)
-        task.wait(1)
-        _Equip("Superhuman")
-        _FarmToMastery("Superhuman","Superhuman",400)
+        _TryBuy("Superhuman","Superhuman","Superhuman",3000000,nil,function()
+            if sea==2 then _TP(CFrame.new(2650,30,-2000)) else _TP(c3) end
+        end,"BuySuperhuman")
+        _FarmToMastery("Superhuman","Superhuman",400,"Superhuman")
     end
 
     if sea == 3 then
-        _SetStatus("Comprando Electric Claw...")
-        _TP(CFrame.new(-9500,150,-7000))
-        pcall(function() _rs.Remotes.CommF_:InvokeServer("BuyElectricClaw") end)
-        task.wait(1)
-        _Equip("ElectricClaw")
-        _FarmToMastery("Electric Claw","ElectricClaw",400)
+        _TryBuy("Electric Claw","ElectricClaw","ElectricClaw",3000000,5000,function()
+            _TP(CFrame.new(-9500,150,-7000))
+        end,"BuyElectricClaw")
+        _FarmToMastery("Electric Claw","ElectricClaw",400,"ElectricClaw")
 
-        _SetStatus("Comprando Dragon Talon...")
-        _TP(CFrame.new(-9500,150,-7000))
-        pcall(function() _rs.Remotes.CommF_:InvokeServer("BuyDragonTalon") end)
-        task.wait(1)
-        _Equip("DragonTalon")
-        _FarmToMastery("Dragon Talon","DragonTalon",400)
+        _TryBuy("Dragon Talon","DragonTalon","DragonTalon",3000000,5000,function()
+            _TP(CFrame.new(-9500,150,-7000))
+        end,"BuyDragonTalon")
+        _FarmToMastery("Dragon Talon","DragonTalon",400,"DragonTalon")
 
-        _SetStatus("Comprando Godhuman...")
-        _TP(CFrame.new(-9500,150,-7000))
-        pcall(function() _rs.Remotes.CommF_:InvokeServer("BuyGodhuman") end)
-        task.wait(1)
-        _SetStatus("Godhuman obtido! Iniciando farm normal...")
+        _TryBuy("Godhuman","Godhuman","Godhuman",5000000,5000,function()
+            _TP(CFrame.new(-9500,150,-7000))
+        end,"BuyGodhuman")
+        _SetStatus("Godhuman obtido! Farm normal ativo.")
     else
-        _SetStatus("Estilos de luta concluidos! Iniciando farm normal...")
+        _SetStatus("Estilos de luta concluidos! Farm normal ativo.")
     end
-
-    task.wait(1)
-    _buyRunning = false
-end
+end)
 
 function CheckLevel2()
 	local L_28_ = {}
