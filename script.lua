@@ -11,75 +11,87 @@ getgenv().EclipseHub = true
 
 local executor = getexecutorname and getexecutorname() or identifyexecutor and identifyexecutor() or nil
 if executor then
-	if
-		string.find(executor, "Bunni") or
-		string.find(executor, "FluxusZ") or
-		string.find(executor, "Delta") or
-		string.find(executor, "Arceus") or
-		string.find(executor, "Xeno") or
-		string.find(executor, "Swift") or
-		string.find(executor, "Awp") or
-		string.find(executor, "Volcano") or
-		string.find(executor, "Argon") or
-		string.find(executor, "Macsploit") or
-		string.find(executor, "Potassium") or
-		string.find(executor, "CodeX") or
-		string.find(executor, "Velocity") or
-		string.find(executor, "Romix") or
-		string.find(executor, "Madium") or
-		string.find(executor, "YubX") or
-		string.find(executor, "Cosmic") or
-		string.find(executor, "Ronix") or
-		string.find(executor, "Hydrogen") or
-		string.find(executor, "Trigon") or
-		string.find(executor, "H202") or
-		string.find(executor, "Cryptic")
-	then
-		print("ok")
-	else
-		game.Players.LocalPlayer:Kick("Please use Delta Exploit or PC use Volcano or a paid exploit!")
-	end
+    if
+        string.find(executor, "Bunni") or
+        string.find(executor, "FluxusZ") or
+        string.find(executor, "Delta") or
+        string.find(executor, "Arceus") or
+        string.find(executor, "Xeno") or
+        string.find(executor, "Swift") or
+        string.find(executor, "Awp") or
+        string.find(executor, "Volcano") or
+        string.find(executor, "Argon") or
+        string.find(executor, "Macsploit") or
+        string.find(executor, "Potassium") or
+        string.find(executor, "CodeX") or
+        string.find(executor, "Velocity") or
+        string.find(executor, "Romix") or
+        string.find(executor, "Madium") or
+        string.find(executor, "YubX") or
+        string.find(executor, "Cosmic") or
+        string.find(executor, "Ronix") or
+        string.find(executor, "Hydrogen") or
+        string.find(executor, "Trigon") or
+        string.find(executor, "H202") or
+        string.find(executor, "Cryptic")
+    then
+        print("ok")
+    else
+        game.Players.LocalPlayer:Kick("Please use Delta Exploit or PC use Volcano or a paid exploit!")
+    end
+end
+
+local _allowedPlaceIds = {
+    [2753915549] = true,
+    [4442272183] = true,
+    [7449423635] = true,
+    [85211729168715] = true,
+    [79091703265657] = true,
+    [100117331123089] = true
+}
+if not _allowedPlaceIds[game.PlaceId] then
+    game.Players.LocalPlayer:Kick("Incorrect Game")
 end
 
 
 local DisableAnimation = game.Players.LocalPlayer.PlayerGui:FindFirstChild('TouchGui')
 local T1UIColor = {
-	["Border Color"] = Color3.fromRGB(50, 50, 50),
-	["Click Effect Color"] = Color3.fromRGB(0, 80, 200),
-	["Setting Icon Color"] = Color3.fromRGB(200, 200, 200),
-	["Logo Image"] = "rbxassetid://91657962282669",
-	["Notification Image"] = "rbxassetid://115125408886765",
-	["Search Icon Color"] = Color3.fromRGB(0, 80, 200),
-	["Search Icon Highlight Color"] = Color3.fromRGB(30, 100, 220),
-	["GUI Text Color"] = Color3.fromRGB(240, 240, 240),
-	["Text Color"] = Color3.fromRGB(240, 240, 240),
-	["Placeholder Text Color"] = Color3.fromRGB(100, 100, 100),
-	["Title Text Color"] = Color3.fromRGB(0, 80, 200),
-	["Background Main Color"] = Color3.fromRGB(15, 15, 15),
-	["Background 1 Color"] = Color3.fromRGB(22, 22, 22),
-	["Background 1 Transparency"] = 0.05,
-	["Background 2 Color"] = Color3.fromRGB(30, 30, 30),
-	["Background 3 Color"] = Color3.fromRGB(25, 25, 25),
-	["Background Image"] = "",
-	["Page Selected Color"] = Color3.fromRGB(0, 80, 200),
-	["Section Text Color"] = Color3.fromRGB(0, 80, 200),
-	["Section Underline Color"] = Color3.fromRGB(0, 80, 200),
-	["Toggle Border Color"] = Color3.fromRGB(70, 70, 70),
-	["Toggle Checked Color"] = Color3.fromRGB(0, 80, 200),
-	["Toggle Desc Color"] = Color3.fromRGB(180, 180, 180),
-	["Button Color"] = Color3.fromRGB(0, 80, 200),
-	["Label Color"] = Color3.fromRGB(0, 80, 200),
-	["Dropdown Icon Color"] = Color3.fromRGB(0, 80, 200),
-	["Dropdown Selected Color"] = Color3.fromRGB(0, 80, 200),
-	["Dropdown Selected Check Color"] = Color3.fromRGB(0, 80, 200),
-	["Textbox Highlight Color"] = Color3.fromRGB(0, 80, 200),
-	["Box Highlight Color"] = Color3.fromRGB(0, 80, 200),
-	["Slider Line Color"] = Color3.fromRGB(45, 45, 45),
-	["Slider Highlight Color"] = Color3.fromRGB(0, 80, 200),
-	["Tween Animation 1 Speed"] = DisableAnimation and 0 or 0.12,
-	["Tween Animation 2 Speed"] = DisableAnimation and 0 or 0.2,
-	["Tween Animation 3 Speed"] = DisableAnimation and 0 or 0.08,
-	["Text Stroke Transparency"] = 0.8
+    ["Border Color"] = Color3.fromRGB(50, 50, 50),
+    ["Click Effect Color"] = Color3.fromRGB(0, 80, 200),
+    ["Setting Icon Color"] = Color3.fromRGB(200, 200, 200),
+    ["Logo Image"] = "rbxassetid://91657962282669",
+    ["Notification Image"] = "rbxassetid://115125408886765",
+    ["Search Icon Color"] = Color3.fromRGB(0, 80, 200),
+    ["Search Icon Highlight Color"] = Color3.fromRGB(30, 100, 220),
+    ["GUI Text Color"] = Color3.fromRGB(240, 240, 240),
+    ["Text Color"] = Color3.fromRGB(240, 240, 240),
+    ["Placeholder Text Color"] = Color3.fromRGB(100, 100, 100),
+    ["Title Text Color"] = Color3.fromRGB(0, 80, 200),
+    ["Background Main Color"] = Color3.fromRGB(15, 15, 15),
+    ["Background 1 Color"] = Color3.fromRGB(22, 22, 22),
+    ["Background 1 Transparency"] = 0.05,
+    ["Background 2 Color"] = Color3.fromRGB(30, 30, 30),
+    ["Background 3 Color"] = Color3.fromRGB(25, 25, 25),
+    ["Background Image"] = "",
+    ["Page Selected Color"] = Color3.fromRGB(0, 80, 200),
+    ["Section Text Color"] = Color3.fromRGB(0, 80, 200),
+    ["Section Underline Color"] = Color3.fromRGB(0, 80, 200),
+    ["Toggle Border Color"] = Color3.fromRGB(70, 70, 70),
+    ["Toggle Checked Color"] = Color3.fromRGB(0, 80, 200),
+    ["Toggle Desc Color"] = Color3.fromRGB(180, 180, 180),
+    ["Button Color"] = Color3.fromRGB(0, 80, 200),
+    ["Label Color"] = Color3.fromRGB(0, 80, 200),
+    ["Dropdown Icon Color"] = Color3.fromRGB(0, 80, 200),
+    ["Dropdown Selected Color"] = Color3.fromRGB(0, 80, 200),
+    ["Dropdown Selected Check Color"] = Color3.fromRGB(0, 80, 200),
+    ["Textbox Highlight Color"] = Color3.fromRGB(0, 80, 200),
+    ["Box Highlight Color"] = Color3.fromRGB(0, 80, 200),
+    ["Slider Line Color"] = Color3.fromRGB(45, 45, 45),
+    ["Slider Highlight Color"] = Color3.fromRGB(0, 80, 200),
+    ["Tween Animation 1 Speed"] = DisableAnimation and 0 or 0.12,
+    ["Tween Animation 2 Speed"] = DisableAnimation and 0 or 0.2,
+    ["Tween Animation 3 Speed"] = DisableAnimation and 0 or 0.08,
+    ["Text Stroke Transparency"] = 0.8
 }
 
 getgenv().UIColor = T1UIColor
@@ -389,7 +401,7 @@ local libCreateNoti = function(Setting)
 	Ruafimg.BackgroundTransparency = 1.000
 	Ruafimg.Position = UDim2.new(0, 5, 0, getgenv().T1 and 5 or 0)
 	Ruafimg.Size = UDim2.new(0, getgenv().T1 and 30 or 25, 0, getgenv().T1 and 15 or 25)
-	Ruafimg.Image = getgenv().UIColor["Notification Image"] or getgenv().UIColor["Logo Image"]
+	Ruafimg.Image = getgenv().UIColor["Logo Image"]
 
 	RuafimgCorner.CornerRadius = UDim.new(1, 0)
 	RuafimgCorner.Name = "RuafimgCorner"
@@ -493,9 +505,7 @@ local libCreateNoti = function(Setting)
 	end)
 
 end
-
-function Library:Notify(Setting, bypass)
-	if not getgenv().Config or bypass then
+Ruafimg.Image = getgenv().UIColor["Notification Image"] or getgenv().UIColor["Logo Image"]
 		local s, e = pcall(function()
 			libCreateNoti(Setting)
 		end)
@@ -1538,7 +1548,7 @@ function Library:CreateWindow(Setting)
              UIGradient_1.Parent = ClickArea_1
              UIGradient_1.Color = ColorSequence.new{
                  ColorSequenceKeypoint.new(0, Color3.fromRGB(110, 20, 180)), 
-                 ColorSequenceKeypoint.new(0.4, Color3.fromRGB(90, 0, 160)), 
+                 ColorSequenceKeypoint.new(0.4, Color3.fromRGB(0, 80, 200)), 
                  ColorSequenceKeypoint.new(0.6, Color3.fromRGB(235, 186, 17)), 
                  ColorSequenceKeypoint.new(1, Color3.fromRGB(215, 166, 7))
              }
@@ -3791,7 +3801,6 @@ local SeaSettingsTab = Window:AddTab("Tab | Sea Settings")
 local ShopTab = Window:AddTab("Tab | Shop")
 local MainTab = Window:AddTab("Tab | Main Farm")
 local MultiFarmTab = Window:AddTab("Tab | Multi Farm")
-local EasterEventTab = Window:AddTab("Tab | Easter Event")
 local OthersTab = Window:AddTab("Tab | Others")
 local FarmingHopTab = Window:AddTab("Tab | Farming and Hop")
 local FruitTab = Window:AddTab("Tab | Fruit")
@@ -3823,24 +3832,56 @@ task.delay(2, function()
 end);
 
 InfoTab:AddSection("Discord")
+
 InfoTab:AddButton({
 	Title = "Join On Eclipse Community!",
 	Callback = function()
 		setclipboard("https://discord.gg/jfNVNrApfb")
-		Library:Notify({Title = "Eclipse Hub", Content = "Discord link copied to clipboard!", Duration = 4})
+		Library:Notify({
+			Title = "Eclipse Hub",
+			Content = "Discord link copied to clipboard!",
+			Duration = 4
+		})
 	end
 })
+
 InfoTab:AddSection("Credits")
-InfoTab:AddParagraph({Title = "Owner", Desc = "ᵏᵏ"})
-InfoTab:AddParagraph({Title = "Devs", Desc = "ᵏᵏ And SAAAAD"})
-InfoTab:AddParagraph({Title = "Helpers", Desc = "DSPK Anormal, Putz, e a Ketty"})
-InfoTab:AddParagraph({Title = "Functions Script", Desc = "Orchidx, DSPK Anormal"})
+
+InfoTab:AddParagraph({
+	Title = "Owner",
+	Desc = "ᵏᵏ"
+})
+InfoTab:AddParagraph({
+	Title = "Devs",
+	Desc = "ᵏᵏ And SAAAAD"
+})
+InfoTab:AddParagraph({
+	Title = "Helpers",
+	Desc = "DSPK Anormal, Putz, e a Ketty"
+})
+InfoTab:AddParagraph({
+	Title = "Functions Script",
+	Desc = "Orchidx, DSPK Anormal"
+})
+InfoTab:AddParagraph({
+	Title = "I Love All Ty For Help Me :3",
+	Desc = ""
+})
+
 InfoTab:AddSection("Eclipse Hub Gen4 Version Stable: 🟢")
+
 InfoTab:AddParagraph({
 	Title = "Gen 4.442 Updates:",
-	Desc = "Fix: Tween Teleport\nNew: Fast Attack\nNew: Volcano Event Tab\nFixed: Random, Store, Teleport To Fruit\nNew: Fishing Functions\nNew: Auto True Triple Katana\nFix: Auto Cdk\nFix: Auto Skull Guitar\nNew: Teleport (Tab)\nFix: Shop, Factory, Pirate Raid\nFix: Raids (Bug)\nFix: Sea Events\nFix: Elite Boss\nNew: Farm Boss And Mastery\nNew: Auto Kick if Admin Joined And Anti Ban\nNew: PvP Functions"
+	Desc = "Fix: Tween Teleport\nNew: Fast Attack (High, Super Fast Attack, Eclipse Attack)\nNew: Volcano Event Tab (And More)\nFixed: Random, Store, Teleport To Fruit (Tween Teleport)\nNew: Fishing Functions\nDisabled: Fully Volcanic\nFixed: Tab One Click (Functions Soon)\nNew: Auto True Triple Katana\nFix: Auto Cdk\nFix: Auto Skull Guitar\nFix: Lag\nNew: Teleport (Tab)\nFix: Shop (Tab)\nFix: Factory And Pirate Raid (Tab Farming)\nFix: Farm (Level Bone, Cake Prince, Tirant, More...)\nFix: Raids (Bug)\nFix: Sea Events (Bugs)\nFix: Elite Boss\nFix: Fast Attack (Not Working On Pc)\nNew: Farm Boss And Mastery\nNew: Auto Kick if Admin Joined And Anti Ban\nNew: PvP Functions"
 })
-InfoTab:AddParagraph({Title = "Curiosity", Desc = "Did you know in the first versions the name changed a lot? Saturn Hub, TRon VOid Hub, Guest Hub, Love Hub and Today Eclipse Hub!"})
+InfoTab:AddParagraph({
+	Title = "Curiosity",
+	Desc = "Did you know in the first versions the name changed a lot? Saturn Hub, TRon VOid Hub, Guest Hub (Old), Love Hub and Today Eclipse Hub!"
+})
+InfoTab:AddParagraph({
+	Title = "Community",
+	Desc = "Join Our Discord Community to know more, Love You All :3 !!!"
+})
 
 
 local function FHNotify(title, text, duration)
@@ -10133,29 +10174,6 @@ task.spawn(function()
 		end;
 	end;
 end);
-
-EasterEventTab:AddSection("Easter Event 28/03/26")
-EasterEventTab:AddToggle({
-	Title = "Get Inf Candy Eggs",
-	Desc = "Infinite candy eggs from Easter Event",
-	Value = false,
-	Callback = function(state)
-		_G.EasterInfEggs = state
-		if state then
-			task.spawn(function()
-				local Remote = game.ReplicatedStorage.Modules.Net:WaitForChild("RE/EasterServiceRE")
-				while _G.EasterInfEggs do
-					pcall(function()
-						Remote:FireServer("CollectVirtualEgg", {VirtualEggName = "Pirate Egg"})
-					end)
-					task.wait(0.3)
-				end
-			end)
-		end
-	end
-})
-
-
 OthersTab:AddToggle({
 	Title = "Chest Hop",
 	Desc = "Troca de servidor apos pegar X baus (define quantidade abaixo)",
@@ -11104,7 +11122,7 @@ end);
 SettingsTab:AddSection("Performance");
 SettingsTab:AddToggle({
 	Title = "Fix Lag",
-	Desc = "Reduces lag and stutters without removing game textures",
+	Desc = "Reduz lag e stutters sem remover texturas do jogo",
 	Value = false,
 	Callback = function(state)
 		getgenv().FixLagEnabled = state
@@ -11131,7 +11149,7 @@ SettingsTab:AddToggle({
 
 SettingsTab:AddToggle({
 	Title = "FPS Boost",
-	Desc = "Removes visual effects to improve FPS and reduce ping",
+	Desc = "Remove texturas e efeitos visuais para melhorar FPS e tentar reduzir ping",
 	Value = false,
 	Callback = function(state)
 		_G.FpsBoostEnabled = state
@@ -13165,7 +13183,7 @@ ChooseChipRaidDropdown = RaidTab:AddDropdown({
 
 AutoRaidToggle = RaidTab:AddToggle({
 	Title = " Auto Raid (Start + Complete)",
-	Desc = "Inicia a raid quando o chip esta na mochila e mata todos os inimigos nas ilhas. Nao compra chip.",
+	Desc = "Starts the raid when the chip is in the bag and kills all enemies on the islands. Nao compra chip.",
 	Value = _G.Settings.Raid["Auto Raid"],
 	Callback = function(state)
 		_G.Settings.Raid["Auto Raid"] = state;
@@ -13252,7 +13270,7 @@ end);
 _G.AutoBuyChip = false;
 AutoBuyChipToggle = RaidTab:AddToggle({
 	Title = " Auto Buy Chip",
-	Desc = "Troca uma fruta que JA esta na mochila pelo Microchip. Nao desarmazena frutas do estoque. Compra apenas 1 chip por vez.",
+	Desc = "Swaps a fruit already in the bag for the Microchip. Does not unstore fruits fo estoque. Compra apenas 1 chip por vez.",
 	Value = false,
 	Callback = function(state)
 		_G.AutoBuyChip = state;
@@ -14276,7 +14294,7 @@ end;
 
 CombatTab:AddToggle({
 	Title = "AimLock Skill",
-	Desc = "Mantem a camera travada no alvo selecionado ao usar skills. Nao move o jogador.",
+	Desc = "Keeps the camera locked on the selected target when using skills. Does not move the player.",
 	Value = false,
 	Callback = function(v)
 		_G.AimLockSkill = v;
@@ -15857,162 +15875,220 @@ end;
 
 
 PrehistoricTab:AddSection("Prehistoric Island")
-PrehistoricTab:AddToggle({
-	Title = "Auto Find Prehistoric Island",
-	Desc = "Sails to Prehistoric Island automatically",
-	Value = false,
-	Callback = function(state)
-		_G.Prehis_Find = state
-		if state then
-			task.spawn(function()
-				while _G.Prehis_Find do
-					pcall(function()
-						if not workspace["_WorldOrigin"].Locations:FindFirstChild("Prehistoric Island", true) then
-							local myBoat = CheckBoat()
-							if not myBoat then
-								local buyBoatCFrame = CFrame.new(-16927.451, 9.086, 433.864)
-								TweenPlayer(buyBoatCFrame)
-								if (buyBoatCFrame.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude <= 10 then
-									game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyBoat", _G.SelectedBoat)
-								end
-							else
-								if game.Players.LocalPlayer.Character.Humanoid.Sit == false then
-									TweenPlayer(myBoat.VehicleSeat.CFrame * CFrame.new(0, 1, 0))
-								else
-									TweenPlayer(CFrame.new(-10000000, 31, 37016.25))
-								end
-							end
-						else
-							local islandLoc = workspace["_WorldOrigin"].Locations:FindFirstChild("Prehistoric Island")
-							if islandLoc and (islandLoc.CFrame.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude >= 2000 then
-								TweenPlayer(islandLoc.CFrame)
-							end
-							if workspace.Map:FindFirstChild("PrehistoricIsland", true) then
-								if workspace.Map.PrehistoricIsland.Core.ActivationPrompt:FindFirstChild("ProximityPrompt", true) then
-									if game.Players.LocalPlayer:DistanceFromCharacter(workspace.Map.PrehistoricIsland.Core.ActivationPrompt.CFrame.Position) <= 150 then
-										fireproximityprompt(workspace.Map.PrehistoricIsland.Core.ActivationPrompt.ProximityPrompt, math.huge)
-										game:GetService("VirtualInputManager"):SendKeyEvent(true, "E", false, game)
-										task.wait(1.5)
-										game:GetService("VirtualInputManager"):SendKeyEvent(false, "E", false, game)
-									end
-									TweenPlayer(workspace.Map.PrehistoricIsland.Core.ActivationPrompt.CFrame)
-								end
-							end
-						end
-					end)
-					task.wait()
-				end
-			end)
-		end
-	end
-})
-PrehistoricTab:AddToggle({
-	Title = "Auto Event Prehistoric Island",
-	Desc = "Auto complete Prehistoric Island event",
-	Value = false,
-	Callback = function(state)
-		_G.Prehis_Skills = state
-		if state then
-			task.spawn(function()
-				while _G.Prehis_Skills do
-					pcall(function()
-						local island = workspace.Map:FindFirstChild("PrehistoricIsland")
-						if island then
-							for _, obj in pairs(island:GetDescendants()) do
-								if obj:IsA("Part") and obj.Name:lower():find("lava") then obj:Destroy() end
-								if obj:IsA("MeshPart") and obj.Name:lower():find("lava") then obj:Destroy() end
-							end
-							local lavaModel = workspace.Map.PrehistoricIsland.Core:FindFirstChild("InteriorLava")
-							if lavaModel and lavaModel:IsA("Model") then lavaModel:Destroy() end
-							if workspace.Enemies:FindFirstChild("Lava Golem") then
-								local v = GetConnectionEnemies("Lava Golem")
-								if v then
-									repeat task.wait() Attack.Kill(v, _G.Prehis_Skills) v.Humanoid:ChangeState(15)
-									until not _G.Prehis_Skills or not v.Parent or v.Humanoid.Health <= 0
-								end
-							end
-							for _, v in pairs(workspace.Map.PrehistoricIsland.Core.VolcanoRocks:GetChildren()) do
-								if v:FindFirstChild("VFXLayer") and v.VFXLayer.At0.Glow.Enabled == true then
-									repeat task.wait()
-										TweenPlayer(v.VFXLayer.CFrame)
-										if game.Players.LocalPlayer:DistanceFromCharacter(v.VFXLayer.CFrame.Position) <= 150 then
-											getgenv().MousePos = v.VFXLayer.CFrame.Position
-											Useskills("Melee","Z") task.wait(0.5)
-											Useskills("Melee","X") task.wait(0.5)
-											Useskills("Melee","C") task.wait(0.5)
-											Useskills("Blox Fruit","Z") task.wait(0.5)
-											Useskills("Blox Fruit","X") task.wait(0.5)
-											Useskills("Blox Fruit","C")
-										end
-									until not _G.Prehis_Skills or v.VFXLayer.At0.Glow.Enabled == false
-								end
-							end
-						end
-					end)
-					task.wait()
-				end
-			end)
-		end
-	end
-})
-PrehistoricTab:AddToggle({
-	Title = "Auto Collect Bone",
-	Desc = "Auto collect Dino Bones",
-	Value = false,
-	Callback = function(state)
-		_G.Prehis_DB = state
-		if state then
-			task.spawn(function()
-				while _G.Prehis_DB do
-					pcall(function()
-						for _, v in pairs(workspace:GetChildren()) do
-							if v.Name == "DinoBone" then TweenPlayer(v.CFrame) end
-						end
-					end)
-					task.wait(1)
-				end
-			end)
-		end
-	end
-})
-PrehistoricTab:AddToggle({
-	Title = "Auto Collect Egg",
-	Desc = "Auto collect Dragon Eggs",
-	Value = false,
-	Callback = function(state)
-		_G.Prehis_DE = state
-		if state then
-			task.spawn(function()
-				while _G.Prehis_DE do
-					pcall(function()
-						local eggs = workspace.Map.PrehistoricIsland.Core.SpawnedDragonEggs:FindFirstChild("DragonEgg")
-						if eggs then
-							TweenPlayer(eggs.Molten.CFrame)
-							fireproximityprompt(eggs.Molten.ProximityPrompt, 30)
-						end
-					end)
-					task.wait(1)
-				end
-			end)
-		end
-	end
-})
-PrehistoricTab:AddToggle({
+
+local PrehistoricFarm = PrehistoricTab
+
+PrehistoricFarm:AddToggle({
 	Title = "Auto Crafting Volcanic Magnet",
 	Desc = "Auto craft Volcanic Magnet",
 	Value = false,
 	Callback = function(state)
 		_G.CraftVolcanicMagnet = state
-		if state then
-			task.spawn(function()
-				while _G.CraftVolcanicMagnet do
-					pcall(function()
-						game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("CraftItem", "Craft", "Volcanic Magnet")
-					end)
-					task.wait(1)
-				end
-			end)
-		end
+		task.spawn(function()
+			while _G.CraftVolcanicMagnet do
+				pcall(function()
+					game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("CraftItem", "Craft", "Volcanic Magnet")
+				end)
+				task.wait(1)
+			end
+		end)
+	end
+})
+
+PrehistoricFarm:AddToggle({
+	Title = "Auto Find Prehistoric Island",
+	Desc = "Sails to Prehistoric Island automatically",
+	Value = false,
+	Callback = function(state)
+		_G.Prehis_Find = state
+		task.spawn(function()
+			while _G.Prehis_Find do
+				pcall(function()
+					if not workspace["_WorldOrigin"].Locations:FindFirstChild("Prehistoric Island", true) then
+						local myBoat = CheckBoat()
+						if not myBoat then
+							local buyBoatCFrame = CFrame.new(-16927.451, 9.086, 433.864)
+							TweenPlayer(buyBoatCFrame)
+							if (buyBoatCFrame.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude <= 10 then
+								game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyBoat", _G.SelectedBoat)
+							end
+						else
+							if game.Players.LocalPlayer.Character.Humanoid.Sit == false then
+								local boatSeatCFrame = myBoat.VehicleSeat.CFrame * CFrame.new(0, 1, 0)
+								TweenPlayer(boatSeatCFrame)
+							else
+								local targetDest = CFrame.new(-10000000, 31, 37016.25)
+								if CheckEnemiesBoat and CheckEnemiesBoat() or CheckTerrorShark and CheckTerrorShark() then
+									TweenPlayer(CFrame.new(-10000000, 150, 37016.25))
+								else
+									TweenPlayer(CFrame.new(-10000000, 31, 37016.25))
+								end
+							end
+						end
+					else
+						local islandLoc = workspace["_WorldOrigin"].Locations:FindFirstChild("Prehistoric Island")
+						if islandLoc and (islandLoc.CFrame.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude >= 2000 then
+							TweenPlayer(islandLoc.CFrame)
+						end
+						if workspace.Map:FindFirstChild("PrehistoricIsland", true) or workspace["_WorldOrigin"].Locations:FindFirstChild("Prehistoric Island", true) then
+							if workspace.Map.PrehistoricIsland.Core.ActivationPrompt:FindFirstChild("ProximityPrompt", true) then
+								if game.Players.LocalPlayer:DistanceFromCharacter(workspace.Map.PrehistoricIsland.Core.ActivationPrompt.CFrame.Position) <= 150 then
+									fireproximityprompt(workspace.Map.PrehistoricIsland.Core.ActivationPrompt.ProximityPrompt, math.huge)
+									game:GetService("VirtualInputManager"):SendKeyEvent(true, "E", false, game)
+									task.wait(1.5)
+									game:GetService("VirtualInputManager"):SendKeyEvent(false, "E", false, game)
+								end
+								TweenPlayer(workspace.Map.PrehistoricIsland.Core.ActivationPrompt.CFrame)
+							end
+						end
+					end
+				end)
+				task.wait()
+			end
+		end)
+	end
+})
+
+PrehistoricFarm:AddToggle({
+	Title = "Auto Event Prehistoric Island",
+	Desc = "Auto complete Prehistoric Island event",
+	Value = false,
+	Callback = function(state)
+		_G.Prehis_Skills = state
+		task.spawn(function()
+			while _G.Prehis_Skills do
+				pcall(function()
+					local prehistoricIsland = workspace.Map:FindFirstChild("PrehistoricIsland")
+					if prehistoricIsland then
+						for _, obj in pairs(prehistoricIsland:GetDescendants()) do
+							if obj:IsA("Part") and obj.Name:lower():find("lava") then obj:Destroy() end
+							if obj:IsA("MeshPart") and obj.Name:lower():find("lava") then obj:Destroy() end
+						end
+						local lavaModel = workspace.Map.PrehistoricIsland.Core:FindFirstChild("InteriorLava")
+						if lavaModel and lavaModel:IsA("Model") then lavaModel:Destroy() end
+						local Island = workspace.Map:FindFirstChild("PrehistoricIsland")
+						if Island then
+							local trialTeleport = workspace.Map.PrehistoricIsland:FindFirstChild("TrialTeleport")
+							for _, v in pairs(Island:GetDescendants()) do
+								if v.Name == "TouchInterest" then
+									if not (trialTeleport and v:IsDescendantOf(trialTeleport)) then
+										v.Parent:Destroy()
+									end
+								end
+							end
+						end
+						if workspace.Enemies:FindFirstChild("Lava Golem") then
+							local v = GetConnectionEnemies("Lava Golem")
+							if v then
+								repeat
+									task.wait()
+									Attack.Kill(v, _G.Prehis_Skills)
+									v.Humanoid:ChangeState(15)
+								until not _G.Prehis_Skills or not v.Parent or v.Humanoid.Health <= 0
+							end
+						end
+						for i, v in pairs(workspace.Map.PrehistoricIsland.Core.VolcanoRocks:GetChildren()) do
+							if v:FindFirstChild("VFXLayer") then
+								if v.VFXLayer.At0.Glow.Enabled == true then
+									repeat
+										task.wait()
+										TweenPlayer(v.VFXLayer.CFrame)
+										if v.VFXLayer.At0.Glow.Enabled == true and game.Players.LocalPlayer:DistanceFromCharacter(v.VFXLayer.CFrame.Position) <= 150 then
+											getgenv().MousePos = v.VFXLayer.CFrame.Position
+											Useskills("Melee", "Z") task.wait(0.5)
+											Useskills("Melee", "X") task.wait(0.5)
+											Useskills("Melee", "C") task.wait(0.5)
+											Useskills("Blox Fruit", "Z") task.wait(0.5)
+											Useskills("Blox Fruit", "X") task.wait(0.5)
+											Useskills("Blox Fruit", "C")
+										end
+									until not _G.Prehis_Skills or v.VFXLayer.At0.Glow.Enabled == false
+								end
+							end
+						end
+					end
+				end)
+				task.wait()
+			end
+		end)
+	end
+})
+
+PrehistoricFarm:AddToggle({
+	Title = "Auto Collect Bone",
+	Desc = "Auto collect Dino Bones",
+	Value = false,
+	Callback = function(state)
+		_G.Prehis_DB = state
+		task.spawn(function()
+			while _G.Prehis_DB do
+				pcall(function()
+					if workspace:FindFirstChild("DinoBone") then
+						for i, v in pairs(workspace:GetChildren()) do
+							if v.Name == "DinoBone" then TweenPlayer(v.CFrame) end
+						end
+					end
+				end)
+				task.wait(1)
+			end
+		end)
+	end
+})
+
+PrehistoricFarm:AddToggle({
+	Title = "Auto Collect Egg",
+	Desc = "Auto collect Dragon Eggs",
+	Value = false,
+	Callback = function(state)
+		_G.Prehis_DE = state
+		task.spawn(function()
+			while _G.Prehis_DE do
+				pcall(function()
+					if workspace.Map.PrehistoricIsland.Core.SpawnedDragonEggs:FindFirstChild("DragonEgg") then
+						TweenPlayer(workspace.Map.PrehistoricIsland.Core.SpawnedDragonEggs:FindFirstChild("DragonEgg").Molten.CFrame)
+						fireproximityprompt(workspace.Map.PrehistoricIsland.Core.SpawnedDragonEggs.DragonEgg.Molten.ProximityPrompt, 30)
+					end
+				end)
+				task.wait(1)
+			end
+		end)
+	end
+})
+
+PrehistoricTab:AddSection("Fully Volcano")
+
+PrehistoricFarm:AddToggle({
+	Title = "Ignore Craft Volcanic Magnet [Fully]",
+	Desc = "Skip crafting step in Fully Volcanic loop",
+	Value = false,
+	Callback = function(state)
+		_G.CraftVM = state
+		task.spawn(function()
+			while _G.CraftVM do
+				pcall(function()
+					if GetM("Volcanic Magnet") < 1 then
+						if GetM("Scrap Metal") >= 10 and GetM("Blaze Ember") >= 15 then
+							game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("CraftItem", "Craft", "Volcanic Magnet")
+						elseif GetM("Scrap Metal") < 10 then
+							local v = GetConnectionEnemies("Forest Pirate")
+							if v then
+								repeat
+									task.wait()
+									Attack.Kill(v, _G.CraftVM)
+								until not _G.CraftVM or not v.Parent or v.Humanoid.Health <= 0 or GetM("Scrap Metal") >= 10
+							else
+								TweenPlayer(CFrame.new(-13206.452148438, 425.89199829102, -7964.5537109375))
+							end
+						elseif GetM("Blaze Ember") < 15 then
+							_G.FarmBlazeEM = true
+							repeat task.wait() until not _G.CraftVM or GetM("Blaze Ember") >= 15
+							_G.FarmBlazeEM = false
+						end
+					end
+				end)
+				task.wait(1)
+			end
+		end)
 	end
 })
 
