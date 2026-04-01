@@ -41,8 +41,6 @@ if executor then
     end
 end
 
-
-
 local DisableAnimation = game.Players.LocalPlayer.PlayerGui:FindFirstChild('TouchGui')
 local T1UIColor = {
     ["Border Color"] = Color3.fromRGB(50, 50, 50),
